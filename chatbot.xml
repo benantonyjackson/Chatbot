@@ -8,8 +8,36 @@
     <!-- Escape phrases -->
 
     <category>
-        <pattern>EXIT</pattern>
-        <template>#0$Goodbye!</template>
+        <pattern> EXIT </pattern>
+        <template>#0$Goodbye</template>
+    </category>
+
+    <category>
+        <pattern> GOODBYE </pattern>
+        <template><srai>EXIT</srai></template>
+    </category>
+
+    <category>
+        <pattern> * GOODBYE * </pattern>
+        <template><srai>EXIT</srai></template>
+    </category>
+
+    <category>
+        <pattern> * GOODBYE </pattern>
+        <template><srai>EXIT</srai></template>
+    </category>
+
+    <category>
+        <pattern> GOODBYE * </pattern>
+        <template><srai>EXIT</srai></template>
+    </category>
+
+    <!-- set name -->
+
+    <category>
+        <pattern>MY NAME IS *</pattern>
+        <template>#1$<star index="1"/></template>
+
     </category>
 
     <!-- default reaction -->

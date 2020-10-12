@@ -1,5 +1,7 @@
 import aiml
 
+name = ''
+
 kernal = aiml.Kernel()
 
 kernal.setTextEncoding(None)
@@ -17,12 +19,13 @@ while True:
         answer = kernal.respond(userInput)
 
         if '#' == answer[0]:
-            cmd, phrase = answer.split("$")
-
+            params = answer.split('$')
+            phrase = params[-1]
+            cmd = params[0]
             if cmd == "#0":
-                print(phrase)
+                print(phrase + " " + name + "!")
                 break
-
+            if cmd == "#1":
+                name = params[1]
         else:
             print(answer)
-
