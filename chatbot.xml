@@ -1,0 +1,9 @@
+<aiml version="1.0.1" encoding="UTF-8">
+
+    <!-- default reaction -->
+    <category>
+    <pattern>*</pattern>
+        <template>I'm sorry, I don't understand</template>
+
+    </category>
+</aiml>
