@@ -1,9 +1,20 @@
 <aiml version="1.0.1" encoding="UTF-8">
 
+    <category>
+        <pattern>HELLO</pattern>
+        <template>Hi there!</template>
+    </category>
+
+    <!-- Escape phrases -->
+
+    <category>
+        <pattern>EXIT</pattern>
+        <template>#0$Goodbye!</template>
+    </category>
+
     <!-- default reaction -->
     <category>
     <pattern>*</pattern>
-        <template>I'm sorry, I don't understand</template>
-
+        <template>I'm sorry, I don't understand. Please try again</template>
     </category>
 </aiml>
