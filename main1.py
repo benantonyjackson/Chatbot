@@ -13,7 +13,7 @@ kernal.bootstrap(learnFiles="chatbot.xml")
 
 parser = Witcher_Wiki_Parser()
 
-parser.get_full_beitiary()
+print(parser.get_beast_weaknesses("Bruxa"))
 
 
 
