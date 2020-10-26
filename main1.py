@@ -13,7 +13,7 @@ kernal.bootstrap(learnFiles="chatbot.xml")
 
 parser = Witcher_Wiki_Parser()
 
-print(parser.get_full_page("Bear"))
+parser.get_full_beitiary()
 
 
 
