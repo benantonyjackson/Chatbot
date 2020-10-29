@@ -1,7 +1,5 @@
 import aiml
-import wikia
-import wikipedia
-from Witcher_Wiki_Parser import Witcher_Wiki_Parser
+from Witcher_Wiki_Parser import WitcherWikiParser
 
 name = ''
 
@@ -11,31 +9,17 @@ kernal.setTextEncoding(None)
 
 kernal.bootstrap(learnFiles="chatbot.xml")
 
-parser = Witcher_Wiki_Parser()
+parser = WitcherWikiParser()
 
-print(parser.get_beast_weaknesses("Bruxa"))
+for b in parser.ALL_BEASTS:
+    print("A " + b + " is weak to:")
 
+    weaknesses = parser.get_beast_weaknesses(b)
 
-
-# print("Welcome to the chat bot")
-#
-# wikipedia.API_URL = "http://{lang}{sub_wikia}.wikia.com/api/v1/{action}"
-#
-# p = wikipedia.page("Bruxa")
-#
-# print(p.title)
-#
-# # wikia.set_lang("en")
-# # wikia.set_lang("nl")
-# # wikia.API_URL = "https://witcher.fandom.com"
-# # test = wikia.page("elderscrolls", "Dragons (Lore)")
-#
-# print("Summary:")
-# # print(test.section_lists("Contents"))
-
-# print(test)
-
-
+    print("A " + b + " is weak to:")
+    for weakness in weaknesses:
+        print(weakness)
+    print("\n ----------- \n")
 
 while True:
     userInput = input("> ")
@@ -54,5 +38,11 @@ while True:
                 break
             if cmd == "#1":
                 name = params[1]
+            if cmd == "#2":
+                beast = params[1]
+                weaknesses = parser.get_beast_weaknesses(beast)
+                print("A " + beast + " is weak to:")
+                for weakness in weaknesses:
+                    print(weakness)
         else:
             print(answer)

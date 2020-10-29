@@ -40,6 +40,11 @@
 
     </category>
 
+    <category>
+        <pattern>WHAT IS A * WEAK TO</pattern>
+        <template>#2$<star index="1"></star> </template>
+    </category>
+
     <!-- default reaction -->
     <category>
     <pattern>*</pattern>
