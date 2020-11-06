@@ -43,8 +43,6 @@ class WitcherWikiParser():
 
     def get_full_page(self, page_title):
         r = requests.get(self.BASE_URL + page_title)
-        # p = Parser()
-        # p.feed(str(r.content))
 
         soup = BeautifulSoup(r.content, "lxml")
 
@@ -59,6 +57,38 @@ class WitcherWikiParser():
 
     def strip_script(self, data):
         pass
+
+    def get_and_save_page(self, beast):
+        # requests.get(self.WIKI_URL + "/" + page)
+        print("Fetching page " + beast)
+        page = beast
+        if beast.lower() == "wargs" or beast.lower() == "warg":
+            #TODO Fix titling issues with wolves
+            beast = "Wolves"
+        elif beast.lower() == "lubberkin" or beast.lower() == "lubberkins":
+            #TODO Fix titling issues with wolves
+            beast = "Botchling"
+        elif beast.lower() == "kikimore" or beast.lower() == "kikimores":
+            return
+        elif beast.lower() == "fugas":
+            #TODO See if you can find a combat guide for Fugas
+            return
+        elif beast.lower() == "godling":
+            return
+        elif beast.lower() == "dettlaff van der eretein":
+            #TODO See if you can find a combat guide for fighting Dettlaff
+            return
+            # return ["Sorry, I'm not quite sure how best to fight Dettlaff. Would you like to learn more about Detlaff?"]
+
+        print("Requesting " + beast)
+        r = requests.get(self.BEAST_MAP[beast.lower()])
+
+        print("Writting" + page)
+        file = open("page_backups" + "/" + page + ".html", "w")
+        file.write(str(r.content))
+        file.close()
+        print("done")
+
 
     def get_beast_weaknesses(self, beast):
 
@@ -99,19 +129,3 @@ class WitcherWikiParser():
 
         return ret
 
-class Parser(HTMLParser):
-    text = ''
-
-    def handle_starttag(self, tag, attrs):
-        # print("Start tag:", tag)
-        if tag == "body":
-            for attr in attrs:
-                print("     attr:", attr)
-
-    def handle_endtag(self, tag):
-        pass
-        # print("Encountered an end tag :", tag)
-
-    def handle_data(self, data):
-        pass
-        # print("Encountered some data  :", data)

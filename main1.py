@@ -11,15 +11,8 @@ kernal.bootstrap(learnFiles="chatbot.xml")
 
 parser = WitcherWikiParser()
 
-for b in parser.ALL_BEASTS:
-    print("A " + b + " is weak to:")
-
-    weaknesses = parser.get_beast_weaknesses(b)
-
-    print("A " + b + " is weak to:")
-    for weakness in weaknesses:
-        print(weakness)
-    print("\n ----------- \n")
+for beast in parser.ALL_BEASTS:
+    parser.get_and_save_page(beast)
 
 while True:
     userInput = input("> ")
