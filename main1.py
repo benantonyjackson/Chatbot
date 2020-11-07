@@ -1,7 +1,47 @@
 import aiml
 from Witcher_Wiki_Parser import WitcherWikiParser
+import numpy as np
+from sklearn.feature_extraction import text
+
+# TODO add more stop words
+stop_words = ['a', 'an', 'is', 'in', 'at', 'and']
 
 name = ''
+
+
+def create_word_dict(senteces):
+    vectorizer = text.TfidfVectorizer(stop_words=stop_words)
+
+    x = vectorizer.fit_transform(senteces)
+
+    print(vectorizer.get_feature_names())
+    print(x.shape)
+
+    allWords = vectorizer.get_feature_names()
+
+    bagOfWords = []
+
+    for sentence in senteces:
+        bag = {}
+
+        for word in allWords:
+            bag[word] = sentence.count(word)
+
+        bagOfWords.append(bag)
+
+    for word in allWords:
+        numOfOcurances = 0
+
+        for bag in bagOfWords:
+            if bag[word] > 0:
+                numOfOcurances += 1
+
+        print(word)
+        # This is the IDF for each word
+        print(np.log( len(senteces) / numOfOcurances  ))
+
+    print(bagOfWords)
+
 
 kernal = aiml.Kernel()
 
@@ -11,8 +51,7 @@ kernal.bootstrap(learnFiles="chatbot.xml")
 
 parser = WitcherWikiParser()
 
-for beast in parser.ALL_BEASTS:
-    parser.get_and_save_page(beast)
+create_word_dict(['This is the first document.','This document is the second document.','And this is the third one.','Is this the first document?'])
 
 while True:
     userInput = input("> ")

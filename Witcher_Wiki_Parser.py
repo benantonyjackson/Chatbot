@@ -12,6 +12,7 @@ class WitcherWikiParser():
     BEAST_MAP = {}
 
     def __init__(self):
+        pass
         self.get_full_beitiary()
 
     def get_full_beitiary(self):
@@ -63,20 +64,20 @@ class WitcherWikiParser():
         print("Fetching page " + beast)
         page = beast
         if beast.lower() == "wargs" or beast.lower() == "warg":
-            #TODO Fix titling issues with wolves
+            # TODO Fix titling issues with wolves
             beast = "Wolves"
         elif beast.lower() == "lubberkin" or beast.lower() == "lubberkins":
-            #TODO Fix titling issues with wolves
+            # TODO Fix titling issues with wolves
             beast = "Botchling"
         elif beast.lower() == "kikimore" or beast.lower() == "kikimores":
             return
         elif beast.lower() == "fugas":
-            #TODO See if you can find a combat guide for Fugas
+            # TODO See if you can find a combat guide for Fugas
             return
         elif beast.lower() == "godling":
             return
         elif beast.lower() == "dettlaff van der eretein":
-            #TODO See if you can find a combat guide for fighting Dettlaff
+            #T ODO See if you can find a combat guide for fighting Dettlaff
             return
             # return ["Sorry, I'm not quite sure how best to fight Dettlaff. Would you like to learn more about Detlaff?"]
 
@@ -93,21 +94,21 @@ class WitcherWikiParser():
     def get_beast_weaknesses(self, beast):
 
         if beast.lower() == "wargs" or beast.lower() == "warg":
-            #TODO Fix titling issues with wolves
+            # TODO Fix titling issues with wolves
             beast = "Wolves"
         if beast.lower() == "lubberkin" or beast.lower() == "lubberkins":
-            #TODO Fix titling issues with wolves
+            # TODO Fix titling issues with wolves
             beast = "Botchling"
         if beast.lower() == "kikimore" or beast.lower() == "kikimores":
             return ['There is more that one type of kikimore',
                     'Implement a follow up question to ask which type of kikimore']
         if beast.lower() == "fugas":
-            #TODO See if you can find a combat guide for Fugas
+            # TODO See if you can find a combat guide for Fugas
             return ['Sorry, I do not know how best to fight Fugas. Would you like to know a bit more about Fugas?']
         if beast.lower() == "godling":
             return ['You do not need to fight Godlings at any point. Would you like to learn more about Goldings']
         if beast.lower() == "dettlaff van der eretein":
-            #TODO See if you can find a combat guide for fighting Dettlaff
+            # TODO See if you can find a combat guide for fighting Dettlaff
             return ["Sorry, I'm not quite sure how best to fight Dettlaff. Would you like to learn more about Detlaff?"]
 
         r = requests.get(self.BEAST_MAP[beast.lower()])
