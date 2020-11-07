@@ -2,11 +2,16 @@ import aiml
 from Witcher_Wiki_Parser import WitcherWikiParser
 import numpy as np
 from sklearn.feature_extraction import text
+from sklearn.metrics.pairwise import cosine_similarity
 import math
 import pandas
 
+
 # TODO add more stop words
 stop_words = ['a', 'an', 'is', 'in', 'at', 'and']
+
+sentence_commands = ['how do I kill',
+                     'goodbye']
 
 name = ''
 
@@ -17,9 +22,25 @@ def tf_idf(sentences):
     bagOfWords = vectorizer.get_feature_names()
     dense = vectors.todense()
     denselist = dense.tolist()
-    print(denselist)
+    #print(denselist)
     df = pandas.DataFrame(denselist, columns=bagOfWords)
-    print(df)
+    #print(df)
+    css = cosine_similarity(vectors)
+
+    sentence1Simalerity = css[0][1:]
+
+    highestSim = max(sentence1Simalerity)
+    print(highestSim)
+    ret = {}
+
+    for i in range(0, len(sentences[1:])):
+        if sentence1Simalerity[i] == highestSim:
+            ret[sentences[i+1]] = highestSim
+            break
+
+    print(ret)
+    print(css)
+    #return sentences[max(css[0][1:])]
 
 
 def create_word_dict(senteces):
@@ -86,7 +107,11 @@ parser = WitcherWikiParser()
 # tf_idf(['The sky is blue', 'The sky is not blue'])
 # create_word_dict(['The sky is blue', 'The sky is not blue'])
 
-tf_idf(['the man went out for a walk', 'the children sat around the fire'])
+# tf_idf(['the man went out for a walk', 'the children sat around the fire'])
+
+print(tf_idf(['kill goodbye'] + sentence_commands))
+
+
 
 while True:
     userInput = input("> ")
