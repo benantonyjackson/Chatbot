@@ -2,6 +2,8 @@ import aiml
 from Witcher_Wiki_Parser import WitcherWikiParser
 import numpy as np
 from sklearn.feature_extraction import text
+import math
+import pandas
 
 # TODO add more stop words
 stop_words = ['a', 'an', 'is', 'in', 'at', 'and']
@@ -9,8 +11,19 @@ stop_words = ['a', 'an', 'is', 'in', 'at', 'and']
 name = ''
 
 
+def tf_idf(sentences):
+    vectorizer = text.TfidfVectorizer()
+    vectors = vectorizer.fit_transform(sentences)
+    bagOfWords = vectorizer.get_feature_names()
+    dense = vectors.todense()
+    denselist = dense.tolist()
+    print(denselist)
+    df = pandas.DataFrame(denselist, columns=bagOfWords)
+    print(df)
+
+
 def create_word_dict(senteces):
-    vectorizer = text.TfidfVectorizer(stop_words=stop_words)
+    vectorizer = text.TfidfVectorizer()
 
     x = vectorizer.fit_transform(senteces)
 
@@ -18,17 +31,19 @@ def create_word_dict(senteces):
     print(x.shape)
 
     allWords = vectorizer.get_feature_names()
-
+    idf = {}
     bagOfWords = []
 
+    # Gets the term frequency TF for each word in each sentence
     for sentence in senteces:
         bag = {}
 
         for word in allWords:
-            bag[word] = sentence.count(word)
+            bag[word] = sentence.lower().count(word)
 
         bagOfWords.append(bag)
 
+    # gets the idf for each word
     for word in allWords:
         numOfOcurances = 0
 
@@ -36,11 +51,27 @@ def create_word_dict(senteces):
             if bag[word] > 0:
                 numOfOcurances += 1
 
-        print(word)
-        # This is the IDF for each word
-        print(np.log( len(senteces) / numOfOcurances  ))
+        print( math.log( (len(senteces) / numOfOcurances)  ) )
+        idf[word] = np.log( (len(senteces) / numOfOcurances)  )
 
-    print(bagOfWords)
+    for bag in bagOfWords:
+        tempArrTf = []
+        tempArrIdf = []
+        for word in allWords:
+            tempArrTf.append(bag[word])
+            tempArrIdf.append(idf[word])
+
+        tf = np.array(tempArrTf)
+        idfArr = np.array(tempArrIdf)
+        #print(tf)
+        #print(idfArr)
+
+        print(tf * idfArr)
+
+        tempArr = []
+
+    #print(bagOfWords)
+    #print(idf)
 
 
 kernal = aiml.Kernel()
@@ -51,7 +82,11 @@ kernal.bootstrap(learnFiles="chatbot.xml")
 
 parser = WitcherWikiParser()
 
-create_word_dict(['This is the first document.','This document is the second document.','And this is the third one.','Is this the first document?'])
+# create_word_dict(['This is the first document.','This document is the second document.','And this is the third one.','Is this the first document?'])
+# tf_idf(['The sky is blue', 'The sky is not blue'])
+# create_word_dict(['The sky is blue', 'The sky is not blue'])
+
+tf_idf(['the man went out for a walk', 'the children sat around the fire'])
 
 while True:
     userInput = input("> ")
