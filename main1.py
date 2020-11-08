@@ -5,20 +5,30 @@ from sklearn.feature_extraction import text
 from sklearn.metrics.pairwise import cosine_similarity
 import math
 import pandas
+from csv import reader
 
 
 # TODO add more stop words
 stop_words = ['a', 'an', 'is', 'in', 'at', 'and']
 
-sentence_commands = ['how do I kill',
-                     'goodbye']
+qa_pairs = []
 
 name = ''
+
+def load_qa_pairs(dir='qapairs.csv'):
+    file = open(dir, 'r')
+
+    fileReader = reader(file)
+
+    for row in fileReader:
+        qa_pairs.append(row)
 
 
 def tf_idf(sentences):
     vectorizer = text.TfidfVectorizer()
+    # Calculates tf.idf
     vectors = vectorizer.fit_transform(sentences)
+    # Gets list of all words used in each sentence
     bagOfWords = vectorizer.get_feature_names()
     dense = vectors.todense()
     denselist = dense.tolist()
@@ -27,12 +37,12 @@ def tf_idf(sentences):
     #print(df)
     css = cosine_similarity(vectors)
 
+    # Gets senetence with the highest similarity
     sentence1Simalerity = css[0][1:]
 
     highestSim = max(sentence1Simalerity)
     print(highestSim)
     ret = {}
-
     for i in range(0, len(sentences[1:])):
         if sentence1Simalerity[i] == highestSim:
             ret[sentences[i+1]] = highestSim
@@ -109,8 +119,7 @@ parser = WitcherWikiParser()
 
 # tf_idf(['the man went out for a walk', 'the children sat around the fire'])
 
-print(tf_idf(['kill goodbye'] + sentence_commands))
-
+load_qa_pairs()
 
 
 while True:
