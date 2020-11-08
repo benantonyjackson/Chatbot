@@ -20,7 +20,11 @@ name = ''
 def handle_qa_pairs(question):
     response = tf_idf(question)
 
-    print(response)
+    if response['similarity'] == 0:
+        print("I'm sorry, I'm not sure what you mean :( Can you rephrase it?")
+    else:
+        print(response)
+        # print(answers[response['index']])
 
 
 def load_qa_pairs(dir='qapairs.csv'):

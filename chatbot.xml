@@ -1,6 +1,6 @@
 <aiml version="1.0.1" encoding="UTF-8">
 
-    <!-- Use that, think, condition -->
+    <!-- Use that, think, condition, topic -->
 
     <category>
         <pattern>HELLO</pattern>
@@ -11,6 +11,11 @@
                 <li>Greetings!</li>
             </random>
         </template>
+    </category>
+
+    <category>
+        <pattern>WHAT IS THE DATE</pattern>
+        <template>Today is <date format="%B %d, %Y" /></template>
     </category>
 
     <!-- Escape phrases -->
