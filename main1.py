@@ -11,9 +11,11 @@ from csv import reader
 # TODO add more stop words
 stop_words = ['a', 'an', 'is', 'in', 'at', 'and']
 
-qa_pairs = []
+questions = []
+answers = []
 
 name = ''
+
 
 def load_qa_pairs(dir='qapairs.csv'):
     file = open(dir, 'r')
@@ -21,10 +23,20 @@ def load_qa_pairs(dir='qapairs.csv'):
     fileReader = reader(file)
 
     for row in fileReader:
-        qa_pairs.append(row)
+        questions.append(row[0])
+        answers.append(row[1])
+
+    print(questions)
+    print(answers)
 
 
-def tf_idf(sentences):
+def tf_idf(inp, allQuestions=questions):
+    # if inp is str:
+    sentences = [inp] + allQuestions
+    # else:
+    #     sentences = inp + allQuestions
+
+
     vectorizer = text.TfidfVectorizer()
     # Calculates tf.idf
     vectors = vectorizer.fit_transform(sentences)
@@ -53,6 +65,8 @@ def tf_idf(sentences):
     #return sentences[max(css[0][1:])]
 
 
+load_qa_pairs()
+
 kernal = aiml.Kernel()
 
 kernal.setTextEncoding(None)
@@ -61,7 +75,7 @@ kernal.bootstrap(learnFiles="chatbot.xml")
 
 parser = WitcherWikiParser()
 
-tf_idf('Tell me about withcer')
+tf_idf('Tell me about the world of witcher')
 
 while True:
     userInput = input("> ")
