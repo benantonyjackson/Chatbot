@@ -1,8 +1,16 @@
 <aiml version="1.0.1" encoding="UTF-8">
 
+    <!-- Use that, think, condition -->
+
     <category>
         <pattern>HELLO</pattern>
-        <template>Hi there!</template>
+        <template>
+            <random>
+                <li>Hello!</li>
+                <li>Hi their!</li>
+                <li>Greetings!</li>
+            </random>
+        </template>
     </category>
 
     <!-- Escape phrases -->
@@ -36,7 +44,18 @@
 
     <category>
         <pattern>MY NAME IS *</pattern>
-        <template>#1$<star index="1"/></template>
+        <template>Hi <set name = "name"><star /></set>! I'll make sure to remember that</template>
+    </category>
+
+    <category>
+        <pattern>DO YOU KNOW MY NAME</pattern>
+
+        <template>
+            <condition name = "name">
+                <li value = "">Sorry, I'm not sure what your name is.</li>
+                <li>Yes! Your name is <get name="name"/></li>
+            </condition>
+        </template>
     </category>
 
     <!-- Gets a monsters susceptibility -->
@@ -61,6 +80,7 @@
     <!-- default reaction -->
     <category>
     <pattern>*</pattern>
-        <template>I'm sorry, I don't understand. Please try again</template>
+      <!--  <template>I'm sorry, I don't understand. Please try again</template>  -->
+        <template>#3$<star index="1"></star></template>
     </category>
 </aiml>

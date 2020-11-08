@@ -16,10 +16,12 @@ answers = []
 
 name = ''
 
+
 def handle_qa_pairs(question):
     response = tf_idf(question)
 
     print(response)
+
 
 def load_qa_pairs(dir='qapairs.csv'):
     file = open(dir, 'r')
@@ -29,9 +31,6 @@ def load_qa_pairs(dir='qapairs.csv'):
     for row in fileReader:
         questions.append(row[0])
         answers.append(row[1])
-
-    print(questions)
-    print(answers)
 
 
 def tf_idf(inp, allQuestions=questions):
@@ -48,9 +47,7 @@ def tf_idf(inp, allQuestions=questions):
     bagOfWords = vectorizer.get_feature_names()
     dense = vectors.todense()
     denselist = dense.tolist()
-    #print(denselist)
     df = pandas.DataFrame(denselist, columns=bagOfWords)
-    #print(df)
     css = cosine_similarity(vectors)
 
     # Gets senetence with the highest similarity
@@ -94,6 +91,7 @@ while True:
                 print(phrase + " " + name + "!")
                 break
             if cmd == "#1":
+                # TODO remove this code and change the command to something else
                 name = params[1]
             if cmd == "#2":
                 beast = params[1]
