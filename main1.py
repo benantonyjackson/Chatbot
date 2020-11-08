@@ -16,6 +16,10 @@ answers = []
 
 name = ''
 
+def handle_qa_pairs(question):
+    response = tf_idf(question)
+
+    print(response)
 
 def load_qa_pairs(dir='qapairs.csv'):
     file = open(dir, 'r')
@@ -53,16 +57,15 @@ def tf_idf(inp, allQuestions=questions):
     sentence1Simalerity = css[0][1:]
 
     highestSim = max(sentence1Simalerity)
-    print(highestSim)
     ret = {}
     for i in range(0, len(sentences[1:])):
         if sentence1Simalerity[i] == highestSim:
-            ret[sentences[i+1]] = highestSim
+            ret['question'] = sentences[i+1]
+            ret['similarity'] = highestSim
+            ret['index'] = i
             break
 
-    print(ret)
-    print(css)
-    #return sentences[max(css[0][1:])]
+    return ret
 
 
 load_qa_pairs()
@@ -74,8 +77,6 @@ kernal.setTextEncoding(None)
 kernal.bootstrap(learnFiles="chatbot.xml")
 
 parser = WitcherWikiParser()
-
-tf_idf('Tell me about the world of witcher')
 
 while True:
     userInput = input("> ")
@@ -100,5 +101,9 @@ while True:
                 print("A " + beast + " is weak to:")
                 for weakness in weaknesses:
                     print(weakness)
+            if cmd == "#3":
+                # QA pairs
+                handle_qa_pairs(params[1])
+
         else:
             print(answer)

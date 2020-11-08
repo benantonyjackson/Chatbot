@@ -37,12 +37,25 @@
     <category>
         <pattern>MY NAME IS *</pattern>
         <template>#1$<star index="1"/></template>
-
     </category>
+
+    <!-- Gets a monsters susceptibility -->
 
     <category>
         <pattern>WHAT IS A * WEAK TO</pattern>
-        <template>#2$<star index="1"></star> </template>
+        <template>#2$<star index="1"></star></template>
+    </category>
+
+    <!-- QA pairs with Cosin similarity -->
+
+    <category>
+        <pattern>WHAT *</pattern>
+        <template>#3$what <star index="1"></star></template>
+    </category>
+
+    <category>
+        <pattern>TELL *</pattern>
+        <template>#3$tell <star index="1"></star></template>
     </category>
 
     <!-- default reaction -->
