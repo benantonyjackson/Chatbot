@@ -53,58 +53,6 @@ def tf_idf(sentences):
     #return sentences[max(css[0][1:])]
 
 
-def create_word_dict(senteces):
-    vectorizer = text.TfidfVectorizer()
-
-    x = vectorizer.fit_transform(senteces)
-
-    print(vectorizer.get_feature_names())
-    print(x.shape)
-
-    allWords = vectorizer.get_feature_names()
-    idf = {}
-    bagOfWords = []
-
-    # Gets the term frequency TF for each word in each sentence
-    for sentence in senteces:
-        bag = {}
-
-        for word in allWords:
-            bag[word] = sentence.lower().count(word)
-
-        bagOfWords.append(bag)
-
-    # gets the idf for each word
-    for word in allWords:
-        numOfOcurances = 0
-
-        for bag in bagOfWords:
-            if bag[word] > 0:
-                numOfOcurances += 1
-
-        print( math.log( (len(senteces) / numOfOcurances)  ) )
-        idf[word] = np.log( (len(senteces) / numOfOcurances)  )
-
-    for bag in bagOfWords:
-        tempArrTf = []
-        tempArrIdf = []
-        for word in allWords:
-            tempArrTf.append(bag[word])
-            tempArrIdf.append(idf[word])
-
-        tf = np.array(tempArrTf)
-        idfArr = np.array(tempArrIdf)
-        #print(tf)
-        #print(idfArr)
-
-        print(tf * idfArr)
-
-        tempArr = []
-
-    #print(bagOfWords)
-    #print(idf)
-
-
 kernal = aiml.Kernel()
 
 kernal.setTextEncoding(None)
@@ -113,14 +61,7 @@ kernal.bootstrap(learnFiles="chatbot.xml")
 
 parser = WitcherWikiParser()
 
-# create_word_dict(['This is the first document.','This document is the second document.','And this is the third one.','Is this the first document?'])
-# tf_idf(['The sky is blue', 'The sky is not blue'])
-# create_word_dict(['The sky is blue', 'The sky is not blue'])
-
-# tf_idf(['the man went out for a walk', 'the children sat around the fire'])
-
-load_qa_pairs()
-
+tf_idf('Tell me about withcer')
 
 while True:
     userInput = input("> ")
