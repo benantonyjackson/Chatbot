@@ -14,9 +14,6 @@ stop_words = ['a', 'an', 'is', 'in', 'at', 'and']
 questions = []
 answers = []
 
-name = ''
-
-
 def handle_qa_pairs(question):
     response = tf_idf(question)
 
@@ -79,6 +76,12 @@ kernal.setTextEncoding(None)
 kernal.bootstrap(learnFiles="chatbot.xml")
 
 parser = WitcherWikiParser()
+
+print(parser.get_summary('ekimmara'))
+
+# for enemy in parser.ALL_BEASTS:
+#     print(enemy + ":")
+#     print(parser.get_summary(enemy))
 
 while True:
     userInput = input("> ")
