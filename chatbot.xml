@@ -83,6 +83,18 @@
         </template>
     </category>
 
+    <!-- Gets a monsters description -->
+
+    <category>
+        <pattern>WHAT IS A *</pattern>
+        <template>#1$<star index="1"></star></template>
+    </category>
+
+    <category>
+        <pattern>DESCRIBE A *</pattern>
+        <template>#1$<star index="1"></star></template>
+    </category>
+
     <!-- Gets a monsters susceptibility -->
 
     <category>

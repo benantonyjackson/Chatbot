@@ -77,12 +77,6 @@ kernal.bootstrap(learnFiles="chatbot.xml")
 
 parser = WitcherWikiParser()
 
-print(parser.get_summary('ekimmara'))
-
-# for enemy in parser.ALL_BEASTS:
-#     print(enemy + ":")
-#     print(parser.get_summary(enemy))
-
 while True:
     userInput = input("> ")
 
@@ -100,7 +94,7 @@ while True:
                 break
             if cmd == "#1":
                 # TODO remove this code and change the command to something else
-                name = params[1]
+                print(parser.get_summary(params[1]))
             if cmd == "#2":
                 beast = params[1]
                 weaknesses = parser.get_beast_weaknesses(beast)

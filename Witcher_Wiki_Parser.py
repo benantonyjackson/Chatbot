@@ -150,6 +150,6 @@ class WitcherWikiParser:
         if enemy == "slyzards":
             return "Dracolizard or Slyzard (Polish: Oszluzg), is a large, grey-colored, flying reptile, sometimes as big as a dragon, for which dracolizards are sometimes mistaken. It is said that Crinfrid Reavers made sure that all members of this species were killed in Redania. Geralt also stated once that nothing in the world is able to parry the blow given by a dracolizard's tail."
         if enemy == "berserkers":
-            return wikia.summary("witcher", enemy)
-        print(self.BEAST_MAP[enemy].split("/")[-1])
+            return wikia.summary("witcher", "werebear")
+        # print(self.BEAST_MAP[enemy].split("/")[-1])
         return wikia.summary("witcher", self.BEAST_MAP[enemy].split("/")[-1])
