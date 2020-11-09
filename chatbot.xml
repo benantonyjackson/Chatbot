@@ -1,6 +1,5 @@
-<aiml version="1.0.1" encoding="UTF-8">
-
-    <!-- Use that, think, condition, topic -->
+<aiml version="2.0" encoding="UTF-8">
+    <!-- Use that, think, topic -->
 
     <category>
         <pattern>HELLO</pattern>
@@ -11,11 +10,6 @@
                 <li>Greetings!</li>
             </random>
         </template>
-    </category>
-
-    <category>
-        <pattern>WHAT IS THE DATE</pattern>
-        <template>Today is <date format="%B %d, %Y" /></template>
     </category>
 
     <!-- Escape phrases -->
@@ -47,6 +41,18 @@
 
     <!-- set name -->
 
+    <topic name="setname">
+        <category>
+            <pattern>YES</pattern>
+            <template>Ok, what is your name?</template>
+        </category>
+
+        <category>
+            <pattern>*</pattern>
+            <template>Hi <set name = "name"><star /></set>! I'll make sure to remember that<think><set name="topic">*</set></think></template>
+        </category>
+    </topic>
+
     <category>
         <pattern>MY NAME IS *</pattern>
         <template>Hi <set name = "name"><star /></set>! I'll make sure to remember that</template>
@@ -54,10 +60,9 @@
 
     <category>
         <pattern>DO YOU KNOW MY NAME</pattern>
-
         <template>
             <condition name = "name">
-                <li value = "">Sorry, I'm not sure what your name is.</li>
+                <li value = ""><set name="topic">setname</set>Sorry, I'm not sure what your name is. Would you like to tell me?</li>
                 <li>Yes! Your name is <get name="name"/></li>
             </condition>
         </template>
@@ -70,7 +75,7 @@
         <template>#2$<star index="1"></star></template>
     </category>
 
-    <!-- QA pairs with Cosin similarity -->
+    <!-- QA pairs with cosine similarity -->
 
     <category>
         <pattern>WHAT *</pattern>
@@ -83,9 +88,10 @@
     </category>
 
     <!-- default reaction -->
-    <category>
+
+   <category>
     <pattern>*</pattern>
-      <!--  <template>I'm sorry, I don't understand. Please try again</template>  -->
         <template>#3$<star index="1"></star></template>
     </category>
+
 </aiml>

@@ -24,7 +24,8 @@ def handle_qa_pairs(question):
         print("I'm sorry, I'm not sure what you mean :( Can you rephrase it?")
     else:
         print(response)
-        # print(answers[response['index']])
+        # Prints most similar answer, adding a new line after each full stop to make it more readable
+        print(answers[response['index']].replace(". ", ".\n"))
 
 
 def load_qa_pairs(dir='qapairs.csv'):
@@ -35,6 +36,7 @@ def load_qa_pairs(dir='qapairs.csv'):
     for row in fileReader:
         questions.append(row[0])
         answers.append(row[1])
+    file.close()
 
 
 def tf_idf(inp, allQuestions=questions):
@@ -42,7 +44,6 @@ def tf_idf(inp, allQuestions=questions):
     sentences = [inp] + allQuestions
     # else:
     #     sentences = inp + allQuestions
-
 
     vectorizer = text.TfidfVectorizer()
     # Calculates tf.idf
