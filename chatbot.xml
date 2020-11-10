@@ -1,6 +1,8 @@
 <aiml version="2.0" encoding="UTF-8">
     <!-- Use that, think, topic -->
 
+    <!-- General conversation -->
+
     <category>
         <pattern>THANK YOU</pattern>
         <template>Your very welcome</template>
@@ -105,18 +107,6 @@
     <category>
         <pattern>WHAT IS A * WEAK TO</pattern>
         <template>#2$<star index="1"></star></template>
-    </category>
-
-    <!-- QA pairs with cosine similarity -->
-
-    <category>
-        <pattern>WHAT *</pattern>
-        <template>#3$what <star index="1"></star></template>
-    </category>
-
-    <category>
-        <pattern>TELL *</pattern>
-        <template>#3$tell <star index="1"></star></template>
     </category>
 
     <!-- default reaction -->

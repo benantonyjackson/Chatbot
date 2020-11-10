@@ -8,6 +8,9 @@ import pandas
 from csv import reader
 from bs4 import BeautifulSoup
 import string
+from PyDictionary import PyDictionary
+from spellchecker import spellchecker
+from autocorrect import Speller
 
 # TODO add more stop words
 stop_words = ['a', 'an', 'is', 'in', 'at', 'and']
@@ -92,9 +95,35 @@ def find_most_similar_document(inp, allQuestions):
     return ret
 
 
+def spell_check_sentence(inp):
+    spell = Speller(lang='en')
+
+    wordsToIgnore = ['chatbot', 'witcher', 'Geralt']
+
+    wordsToIgnore += parser.ALL_BEASTS
+
+    ret = ""
+
+    for word in inp.split(' '):
+        if word not in wordsToIgnore:
+            ret += spell(word) + " "
+        else:
+            ret += word + " "
+
+    return ret[:-1]
+
+
 def process_input(userInput):
     responseAgent = "aiml"
+
+    # Strips punctuation from input
     userInput = userInput.translate(str.maketrans('', '', string.punctuation))
+    spell = spellchecker.SpellChecker()
+
+    userInput = spell_check_sentence(userInput)
+
+    print(userInput)
+
     if responseAgent == "aiml":
         answer = kernal.respond(userInput)
 
@@ -125,6 +154,7 @@ def process_input(userInput):
 if __name__ == "__main__":
     get_all_patterns()
     load_qa_pairs()
+    dictionary = PyDictionary()
 
     kernal = aiml.Kernel()
 
