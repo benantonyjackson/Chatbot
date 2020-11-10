@@ -5,22 +5,18 @@ from sklearn.feature_extraction import text
 from sklearn.metrics.pairwise import cosine_similarity
 import math
 import pandas
-from csv import reader
 from bs4 import BeautifulSoup
 import string
 from PyDictionary import PyDictionary
 from spellchecker import spellchecker
 from autocorrect import Speller
 
-# TODO add more stop words
-stop_words = ['a', 'an', 'is', 'in', 'at', 'and']
-
-questions = []
-answers = []
+from qapairs import QApairs
 
 ALL_CATEGORIES = []
 CATEGORIES_WITHOUT_WILDCARDS = []
 
+qapairs = QApairs()
 
 def get_all_patterns():
     file = open("chatbot.xml")
@@ -37,28 +33,17 @@ def get_all_patterns():
 
 def handle_qa_pairs(question):
     # tf_idf(questions + CATEGORIES_WITHOUT_WILDCARDS)
-    response = find_most_similar_document(question, questions + CATEGORIES_WITHOUT_WILDCARDS)
+    response = find_most_similar_document(question, qapairs.questions + CATEGORIES_WITHOUT_WILDCARDS)
 
     if response['similarity'] == 0:
         print("I'm sorry, I'm not sure what you mean :( Can you rephrase it?")
     else:
         print(response)
-        if response['index'] < len(questions):
+        if response['index'] < len(qapairs.questions):
             # Prints most similar answer, adding a new line after each full stop to make it more readable
-            print(answers[response['index']].replace(". ", ".\n"))
+            print(qapairs.answers[response['index']].replace(". ", ".\n"))
         else:
-            process_input(ALL_CATEGORIES[response['index'] - len(questions)])
-
-
-def load_qa_pairs(dir='qapairs.csv'):
-    file = open(dir, 'r')
-
-    fileReader = reader(file)
-
-    for row in fileReader:
-        questions.append(row[0])
-        answers.append(row[1])
-    file.close()
+            process_input(ALL_CATEGORIES[response['index'] - len(qapairs.questions)])
 
 
 def tf_idf(documents):
@@ -98,7 +83,8 @@ def find_most_similar_document(inp, allQuestions):
 def spell_check_sentence(inp):
     spell = Speller(lang='en')
 
-    wordsToIgnore = ['chatbot', 'witcher', 'Geralt']
+    # Defines a list of valid in this context that would likley get picked up by the spell checker package
+    wordsToIgnore = ['chatbot', 'witcher', 'geralt', 'rivia']
 
     wordsToIgnore += parser.ALL_BEASTS
 
@@ -118,14 +104,13 @@ def process_input(userInput):
 
     # Strips punctuation from input
     userInput = userInput.translate(str.maketrans('', '', string.punctuation))
-    spell = spellchecker.SpellChecker()
+
+    userInput = userInput.lower()
 
     userInput = spell_check_sentence(userInput)
 
-    print(userInput)
-
     if responseAgent == "aiml":
-        answer = kernal.respond(userInput)
+        answer = kernel.respond(userInput)
 
         if '#' in answer[0]:
             params = answer.split('$')
@@ -135,7 +120,6 @@ def process_input(userInput):
                 print(phrase)
                 quit()
             if cmd == "#1":
-                # TODO remove this code and change the command to something else
                 print(parser.get_summary(params[1]))
             if cmd == "#2":
                 beast = params[1]
@@ -153,14 +137,13 @@ def process_input(userInput):
 
 if __name__ == "__main__":
     get_all_patterns()
-    load_qa_pairs()
-    dictionary = PyDictionary()
+    qapairs.load_qa_pairs()
 
-    kernal = aiml.Kernel()
+    kernel = aiml.Kernel()
 
-    kernal.setTextEncoding(None)
+    kernel.setTextEncoding(None)
 
-    kernal.bootstrap(learnFiles="chatbot.xml")
+    kernel.bootstrap(learnFiles="chatbot.xml")
 
     parser = WitcherWikiParser()
 
