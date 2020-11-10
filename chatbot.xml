@@ -5,7 +5,18 @@
 
     <category>
         <pattern>THANK YOU</pattern>
-        <template>Your very welcome</template>
+        <template>
+            <random>
+                <li>Your very welcome!</li>
+                <li>No problem!</li>
+                <li>Any time!</li>
+            </random>
+        </template>
+    </category>
+
+    <category>
+        <pattern>HOW ARE YOU</pattern>
+        <template>I'm very good thanks! What would you like to ask me?</template>
     </category>
 
     <category>
@@ -20,17 +31,7 @@
     </category>
 
     <category>
-        <pattern>HELLO *</pattern>
-        <template><srai>HELLO</srai></template>
-    </category>
-
-    <category>
         <pattern>HI</pattern>
-        <template><srai>HELLO</srai></template>
-    </category>
-
-    <category>
-        <pattern>HI *</pattern>
         <template><srai>HELLO</srai></template>
     </category>
 
@@ -43,21 +44,6 @@
 
     <category>
         <pattern> GOODBYE </pattern>
-        <template><srai>EXIT</srai></template>
-    </category>
-
-    <category>
-        <pattern> * GOODBYE * </pattern>
-        <template><srai>EXIT</srai></template>
-    </category>
-
-    <category>
-        <pattern> * GOODBYE </pattern>
-        <template><srai>EXIT</srai></template>
-    </category>
-
-    <category>
-        <pattern> GOODBYE * </pattern>
         <template><srai>EXIT</srai></template>
     </category>
 

@@ -18,6 +18,7 @@ CATEGORIES_WITHOUT_WILDCARDS = []
 
 qapairs = QApairs()
 
+
 def get_all_patterns():
     file = open("chatbot.xml")
     soup = BeautifulSoup(file.read(), "lxml")
@@ -31,18 +32,21 @@ def get_all_patterns():
             CATEGORIES_WITHOUT_WILDCARDS.append(category.text)
 
 
-def handle_qa_pairs(question):
+# Employs different techniques to find the most similar question
+def find_most_similar_question(question):
     # tf_idf(questions + CATEGORIES_WITHOUT_WILDCARDS)
     response = find_most_similar_document(question, qapairs.questions + CATEGORIES_WITHOUT_WILDCARDS)
 
+    # If the similarity is 0 then an appropriate match was not found
     if response['similarity'] == 0:
         print("I'm sorry, I'm not sure what you mean :( Can you rephrase it?")
     else:
-        print(response)
+        # Checks if the most similar response is a qa pair or a pattern without a wild card
         if response['index'] < len(qapairs.questions):
             # Prints most similar answer, adding a new line after each full stop to make it more readable
             print(qapairs.answers[response['index']].replace(". ", ".\n"))
         else:
+            # If the most similar result is a pattern without a wild card, input the pattern into the chat bot
             process_input(ALL_CATEGORIES[response['index'] - len(qapairs.questions)])
 
 
@@ -57,17 +61,21 @@ def tf_idf(documents):
     print(df)
 
 
+# Uses cosine similarity to find the most similar document to the input
 def find_most_similar_document(inp, allQuestions):
+    # Adds input the the questions list to get full list of documents
     sentences = [inp] + allQuestions
 
+    # Calculates tf-idf
     vectorizer = text.TfidfVectorizer()
-    # Calculates tf*idf
     vectors = vectorizer.fit_transform(sentences)
+
     css = cosine_similarity(vectors)
 
-    # Gets senetence with the highest similarity
+    # Gets the cosine similarity matrix for the input and strips the similarity score for its self
     sentence1Simalerity = css[0][1:]
 
+    # Finds the document most similar to the input
     highestSim = max(sentence1Simalerity)
     ret = {}
     for i in range(0, len(sentences[1:])):
@@ -83,7 +91,7 @@ def find_most_similar_document(inp, allQuestions):
 def spell_check_sentence(inp):
     spell = Speller(lang='en')
 
-    # Defines a list of valid in this context that would likley get picked up by the spell checker package
+    # Defines a list of valid in this context that would likely get picked up by the spell checker package
     wordsToIgnore = ['chatbot', 'witcher', 'geralt', 'rivia']
 
     wordsToIgnore += parser.ALL_BEASTS
@@ -129,7 +137,7 @@ def process_input(userInput):
                     print(weakness)
             if cmd == "#3":
                 # QA pairs
-                handle_qa_pairs(params[1])
+                find_most_similar_question(params[1])
 
         else:
             print(answer)
@@ -149,5 +157,3 @@ if __name__ == "__main__":
 
     while True:
         process_input(input('> '))
-
-
