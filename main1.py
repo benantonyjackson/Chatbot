@@ -94,7 +94,7 @@ def spell_check_sentence(inp):
     # Defines a list of valid in this context that would likely get picked up by the spell checker package
     wordsToIgnore = ['chatbot', 'witcher', 'geralt', 'rivia']
 
-    wordsToIgnore += parser.ALL_BEASTS
+    wordsToIgnore += parser.ALL_ENEMIES
 
     ret = ""
 

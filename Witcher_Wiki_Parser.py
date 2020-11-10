@@ -8,38 +8,43 @@ class WitcherWikiParser:
     BASE_URL = 'https://witcher.fandom.com/'
     WIKI_URL = BASE_URL + "wiki"
 
-    types = []
-    ALL_BEASTS = []
-    BEAST_MAP = {}
+    # Stores all of the different types of enemies
+    TYPES = []
+
+    # Stores all enemies
+    ALL_ENEMIES = []
+    # Dictionary that maps each enemies name to the url to its wiki page
+    ENEMY_MAP = {}
 
     def __init__(self):
-        self.get_full_beitiary()
+        self.get_full_bestiary()
 
-    def get_full_beitiary(self):
-        allBeasts = []
+    def get_full_bestiary(self):
+        allEnemies = []
+
+        # Requests the bestiary which contains a list of all enemies in the game
         r = requests.get(self.BASE_URL + "The_Witcher_3_bestiary")
-
         soup = BeautifulSoup(r.content, "lxml")
-
+        
+        # Uses the headlines to construct list of enemy types
         types = soup.findAll("span", {"class": "mw-headline"})
-
         for type in types:
-            self.types.append(type.text)
+            self.TYPES.append(type.text)
 
         allBeastCategories = soup.findAll("div", {"class": "divTable"})
+        
+        # loops through ea
+        for enemyCategory in allBeastCategories:
+            enemyCatagorySoup = BeautifulSoup(str(enemyCategory), "lxml")
 
-        for beastCategory in allBeastCategories:
-            # print(beastCategory)
-            beastCatSoup = BeautifulSoup(str(beastCategory), "lxml")
+            enemies = enemyCatagorySoup.findAll("a")
 
-            beasts = beastCatSoup.findAll("a")
+            for enemy in enemies:
+                allEnemies.append(enemy.text.lower())
+                self.ENEMY_MAP[enemy.text.lower()] = self.BASE_URL + enemy['href']
+                self.ENEMY_MAP[enemy['title'].lower()] = self.BASE_URL + enemy['href']
 
-            for beast in beasts:
-                allBeasts.append(beast.text.lower())
-                self.BEAST_MAP[beast.text.lower()] = self.BASE_URL + beast['href']
-                self.BEAST_MAP[beast['title'].lower()] = self.BASE_URL + beast['href']
-
-        self.ALL_BEASTS = allBeasts
+        self.ALL_ENEMIES = allEnemies
 
     def get_full_page(self, page_title):
         r = requests.get(self.BASE_URL + page_title)
@@ -81,7 +86,7 @@ class WitcherWikiParser:
             # return ["Sorry, I'm not quite sure how best to fight Dettlaff. Would you like to learn more about Detlaff?"]
 
         print("Requesting " + beast)
-        r = requests.get(self.BEAST_MAP[beast.lower()])
+        r = requests.get(self.ENEMY_MAP[beast.lower()])
 
         print("Writting" + page)
         file = open("page_backups" + "/" + page + ".html", "w")
@@ -110,7 +115,7 @@ class WitcherWikiParser:
             # TODO See if you can find a combat guide for fighting Dettlaff
             return ["Sorry, I'm not quite sure how best to fight Dettlaff. Would you like to learn more about Detlaff?"]
 
-        r = requests.get(self.BEAST_MAP[beast.lower()])
+        r = requests.get(self.ENEMY_MAP[beast.lower()])
 
         soup = BeautifulSoup(r.content, "lxml")
         mydivs = soup.findAll("div", {"data-source": "Susceptibility"})
@@ -152,4 +157,4 @@ class WitcherWikiParser:
         if enemy == "berserkers":
             return wikia.summary("witcher", "werebear")
         # print(self.BEAST_MAP[enemy].split("/")[-1])
-        return wikia.summary("witcher", self.BEAST_MAP[enemy].split("/")[-1])
+        return wikia.summary("witcher", self.ENEMY_MAP[enemy].split("/")[-1])
