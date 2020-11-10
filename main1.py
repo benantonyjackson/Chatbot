@@ -46,7 +46,6 @@ def handle_qa_pairs(question):
             process_input(ALL_CATEGORIES[response['index'] - len(questions)])
 
 
-
 def load_qa_pairs(dir='qapairs.csv'):
     file = open(dir, 'r')
 
