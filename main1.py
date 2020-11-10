@@ -116,9 +116,15 @@ def get_enemy_description(inp, parser):
 
 def get_enemy_weaknesses(inp, parser):
     try:
-        beast = inp
-        weaknesses = parser.get_beast_weaknesses(beast)
-        print("A " + beast + " is weak to:")
+        words = inp.split(' ')
+
+        if words not in parser.ALL_ENEMIES and len(words) > 1:
+            for word in words:
+                if word in parser.ALL_ENEMIES:
+                    inp = word
+
+        weaknesses = parser.get_beast_weaknesses(inp)
+        print("A " + inp + " is weak to:")
         for weakness in weaknesses:
             print(weakness)
     except (Exception):

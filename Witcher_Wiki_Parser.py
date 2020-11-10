@@ -44,6 +44,16 @@ class WitcherWikiParser:
                 self.ENEMY_MAP[enemy.text.lower()] = self.BASE_URL + enemy['href']
                 self.ENEMY_MAP[enemy['title'].lower().replace(" (creature)", "")] = self.BASE_URL + enemy['href']
 
+        allEnemies.append('wargs')
+        allEnemies.append('warg')
+        allEnemies.append('lubberkin')
+        allEnemies.append('lubberkins')
+        allEnemies.append('kikimore')
+        allEnemies.append('kikimores')
+        allEnemies.append('fugas')
+        allEnemies.append('godling')
+        allEnemies.append('dettlaff van der eretein')
+
         self.ALL_ENEMIES = allEnemies
 
     def get_beast_weaknesses(self, beast):

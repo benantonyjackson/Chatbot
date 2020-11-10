@@ -106,11 +106,6 @@
     </category>
 
     <category>
-        <pattern>HOW DO I KILL A *</pattern>
-        <template>#2$<star index="1"></star></template>
-    </category>
-
-    <category>
         <pattern>HOW WOULD I KILL *</pattern>
         <template>#2$<star index="1"></star></template>
     </category>
