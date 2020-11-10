@@ -95,6 +95,41 @@
         <template>#2$<star index="1"></star></template>
     </category>
 
+    <category>
+        <pattern>WHAT IS A * WEAK AGAINST</pattern>
+        <template>#2$<star index="1"></star></template>
+    </category>
+
+    <category>
+        <pattern>HOW DO I KILL *</pattern>
+        <template>#2$<star index="1"></star></template>
+    </category>
+
+    <category>
+        <pattern>HOW DO I KILL A *</pattern>
+        <template>#2$<star index="1"></star></template>
+    </category>
+
+    <category>
+        <pattern>HOW WOULD I KILL *</pattern>
+        <template>#2$<star index="1"></star></template>
+    </category>
+
+    <category>
+        <pattern>HOW WOULD I BEAT *</pattern>
+        <template>#2$<star index="1"></star></template>
+    </category>
+
+    <category>
+        <pattern>HOW DO I BEAT A * </pattern>
+        <template>#2$<star index="1"></star></template>
+    </category>
+
+    <category>
+        <pattern>HOW DO I BEAT *</pattern>
+        <template>#2$<star index="1"></star></template>
+    </category>
+
     <!-- default reaction -->
 
    <category>

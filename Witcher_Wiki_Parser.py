@@ -42,12 +42,11 @@ class WitcherWikiParser:
             for enemy in enemies:
                 allEnemies.append(enemy.text.lower())
                 self.ENEMY_MAP[enemy.text.lower()] = self.BASE_URL + enemy['href']
-                self.ENEMY_MAP[enemy['title'].lower()] = self.BASE_URL + enemy['href']
+                self.ENEMY_MAP[enemy['title'].lower().replace(" (creature)", "")] = self.BASE_URL + enemy['href']
 
         self.ALL_ENEMIES = allEnemies
 
     def get_beast_weaknesses(self, beast):
-
         if beast.lower() == "wargs" or beast.lower() == "warg":
             # TODO Fix titling issues with wolves
             beast = "Wolves"
@@ -106,5 +105,5 @@ class WitcherWikiParser:
             return "Dracolizard or Slyzard (Polish: Oszluzg), is a large, grey-colored, flying reptile, sometimes as big as a dragon, for which dracolizards are sometimes mistaken. It is said that Crinfrid Reavers made sure that all members of this species were killed in Redania. Geralt also stated once that nothing in the world is able to parry the blow given by a dracolizard's tail."
         if enemy == "berserkers":
             return wikia.summary("witcher", "werebear")
-        # print(self.BEAST_MAP[enemy].split("/")[-1])
+
         return wikia.summary("witcher", self.ENEMY_MAP[enemy].split("/")[-1])

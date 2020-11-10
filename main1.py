@@ -92,7 +92,7 @@ def spell_check_sentence(inp):
     spell = Speller(lang='en')
 
     # Defines a list of valid in this context that would likely get picked up by the spell checker package
-    wordsToIgnore = ['chatbot', 'witcher', 'geralt', 'rivia']
+    wordsToIgnore = ['chatbot', 'witcher', 'geralt', 'rivia', 'warg']
 
     wordsToIgnore += parser.ALL_ENEMIES
 
@@ -105,6 +105,24 @@ def spell_check_sentence(inp):
             ret += word + " "
 
     return ret[:-1]
+
+
+def get_enemy_description(inp, parser):
+    try:
+        print(parser.get_summary(inp))
+    except (Exception):
+        print("Sorry I'm not sure what a '" + inp + "' is. Try asking something else")
+
+
+def get_enemy_weaknesses(inp, parser):
+    try:
+        beast = inp
+        weaknesses = parser.get_beast_weaknesses(beast)
+        print("A " + beast + " is weak to:")
+        for weakness in weaknesses:
+            print(weakness)
+    except (Exception):
+        print("Sorry I'm not sure what a '" + inp + "' is. Try asking something else")
 
 
 def process_input(userInput):
@@ -128,13 +146,9 @@ def process_input(userInput):
                 print(phrase)
                 quit()
             if cmd == "#1":
-                print(parser.get_summary(params[1]))
+                get_enemy_description(params[1], parser)
             if cmd == "#2":
-                beast = params[1]
-                weaknesses = parser.get_beast_weaknesses(beast)
-                print("A " + beast + " is weak to:")
-                for weakness in weaknesses:
-                    print(weakness)
+                get_enemy_weaknesses(params[1], parser)
             if cmd == "#3":
                 # QA pairs
                 find_most_similar_question(params[1])
