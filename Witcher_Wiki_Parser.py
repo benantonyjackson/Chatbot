@@ -46,55 +46,6 @@ class WitcherWikiParser:
 
         self.ALL_ENEMIES = allEnemies
 
-    def get_full_page(self, page_title):
-        r = requests.get(self.BASE_URL + page_title)
-
-        soup = BeautifulSoup(r.content, "lxml")
-
-        mydivs = soup.findAll("div", {"data-source": "Susceptibility"})
-
-        print(mydivs)
-
-        for div in mydivs:
-            print(div)
-
-        return "Done!"
-
-    def strip_script(self, data):
-        pass
-
-    def get_and_save_page(self, beast):
-        # requests.get(self.WIKI_URL + "/" + page)
-        print("Fetching page " + beast)
-        page = beast
-        if beast.lower() == "wargs" or beast.lower() == "warg":
-            # TODO Fix titling issues with wolves
-            beast = "Wolves"
-        elif beast.lower() == "lubberkin" or beast.lower() == "lubberkins":
-            # TODO Fix titling issues with wolves
-            beast = "Botchling"
-        elif beast.lower() == "kikimore" or beast.lower() == "kikimores":
-            return
-        elif beast.lower() == "fugas":
-            # TODO See if you can find a combat guide for Fugas
-            return
-        elif beast.lower() == "godling":
-            return
-        elif beast.lower() == "dettlaff van der eretein":
-            #TODO See if you can find a combat guide for fighting Dettlaff
-            return
-            # return ["Sorry, I'm not quite sure how best to fight Dettlaff. Would you like to learn more about Detlaff?"]
-
-        print("Requesting " + beast)
-        r = requests.get(self.ENEMY_MAP[beast.lower()])
-
-        print("Writting" + page)
-        file = open("page_backups" + "/" + page + ".html", "w")
-        file.write(str(r.content))
-        file.close()
-        print("done")
-
-
     def get_beast_weaknesses(self, beast):
 
         if beast.lower() == "wargs" or beast.lower() == "warg":
@@ -120,7 +71,6 @@ class WitcherWikiParser:
         soup = BeautifulSoup(r.content, "lxml")
         mydivs = soup.findAll("div", {"data-source": "Susceptibility"})
 
-        #TODO This is a bit flimsy, try to find a better way!
         witcher3Weaknesses = mydivs[-1]
 
         weaknessSoup = BeautifulSoup(str(witcher3Weaknesses), "lxml")
