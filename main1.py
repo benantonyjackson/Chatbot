@@ -14,6 +14,7 @@ stop_words = ['a', 'an', 'is', 'in', 'at', 'and']
 questions = []
 answers = []
 
+
 def handle_qa_pairs(question):
     response = tf_idf(question)
 
@@ -67,19 +68,7 @@ def tf_idf(inp, allQuestions=questions):
     return ret
 
 
-load_qa_pairs()
-
-kernal = aiml.Kernel()
-
-kernal.setTextEncoding(None)
-
-kernal.bootstrap(learnFiles="chatbot.xml")
-
-parser = WitcherWikiParser()
-
-while True:
-    userInput = input("> ")
-
+def process_input(userInput):
     responseAgent = "aiml"
 
     if responseAgent == "aiml":
@@ -90,8 +79,8 @@ while True:
             phrase = params[-1]
             cmd = params[0]
             if cmd == "#0":
-                print(phrase + " " + name + "!")
-                break
+                print(phrase)
+                quit()
             if cmd == "#1":
                 # TODO remove this code and change the command to something else
                 print(parser.get_summary(params[1]))
@@ -107,3 +96,20 @@ while True:
 
         else:
             print(answer)
+
+
+if __name__ == "__main__":
+    load_qa_pairs()
+
+    kernal = aiml.Kernel()
+
+    kernal.setTextEncoding(None)
+
+    kernal.bootstrap(learnFiles="chatbot.xml")
+
+    parser = WitcherWikiParser()
+
+    while True:
+        process_input(input('> '))
+
+

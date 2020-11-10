@@ -2,6 +2,11 @@
     <!-- Use that, think, topic -->
 
     <category>
+        <pattern>*THANK YOU*</pattern>
+        <template>Your very welcome</template>
+    </category>
+
+    <category>
         <pattern>HELLO</pattern>
         <template>
             <random>
