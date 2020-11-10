@@ -2,7 +2,7 @@
     <!-- Use that, think, topic -->
 
     <category>
-        <pattern>*THANK YOU*</pattern>
+        <pattern>THANK YOU</pattern>
         <template>Your very welcome</template>
     </category>
 

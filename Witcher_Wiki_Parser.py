@@ -76,7 +76,7 @@ class WitcherWikiParser:
         elif beast.lower() == "godling":
             return
         elif beast.lower() == "dettlaff van der eretein":
-            #T ODO See if you can find a combat guide for fighting Dettlaff
+            #TODO See if you can find a combat guide for fighting Dettlaff
             return
             # return ["Sorry, I'm not quite sure how best to fight Dettlaff. Would you like to learn more about Detlaff?"]
 

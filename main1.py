@@ -6,6 +6,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import math
 import pandas
 from csv import reader
+from bs4 import BeautifulSoup
 
 
 # TODO add more stop words
@@ -14,16 +15,36 @@ stop_words = ['a', 'an', 'is', 'in', 'at', 'and']
 questions = []
 answers = []
 
+ALL_CATEGORIES = []
+CATEGORIES_WITHOUT_WILDCARDS = []
+
+
+def get_all_patterns():
+    file = open("chatbot.xml")
+    soup = BeautifulSoup(file.read(), "lxml")
+    file.close()
+
+    categories = soup.findAll('pattern')
+
+    for catagory in categories:
+        ALL_CATEGORIES.append(catagory.text)
+        if '*' not in catagory:
+            CATEGORIES_WITHOUT_WILDCARDS.append(catagory.text)
+
 
 def handle_qa_pairs(question):
-    response = tf_idf(question)
+    response = tf_idf(question, questions + CATEGORIES_WITHOUT_WILDCARDS)
 
     if response['similarity'] == 0:
         print("I'm sorry, I'm not sure what you mean :( Can you rephrase it?")
     else:
         print(response)
-        # Prints most similar answer, adding a new line after each full stop to make it more readable
-        print(answers[response['index']].replace(". ", ".\n"))
+        if response['index'] < len(questions):
+            # Prints most similar answer, adding a new line after each full stop to make it more readable
+            print(answers[response['index']].replace(". ", ".\n"))
+        else:
+            process_input(ALL_CATEGORIES[response['index'] - len(questions)])
+
 
 
 def load_qa_pairs(dir='qapairs.csv'):
@@ -37,7 +58,7 @@ def load_qa_pairs(dir='qapairs.csv'):
     file.close()
 
 
-def tf_idf(inp, allQuestions=questions):
+def tf_idf(inp, allQuestions):
     # if inp is str:
     sentences = [inp] + allQuestions
     # else:
@@ -99,6 +120,7 @@ def process_input(userInput):
 
 
 if __name__ == "__main__":
+    get_all_patterns()
     load_qa_pairs()
 
     kernal = aiml.Kernel()
