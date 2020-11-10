@@ -7,7 +7,7 @@ import math
 import pandas
 from csv import reader
 from bs4 import BeautifulSoup
-
+import string
 
 # TODO add more stop words
 stop_words = ['a', 'an', 'is', 'in', 'at', 'and']
@@ -26,14 +26,15 @@ def get_all_patterns():
 
     categories = soup.findAll('pattern')
 
-    for catagory in categories:
-        ALL_CATEGORIES.append(catagory.text)
-        if '*' not in catagory:
-            CATEGORIES_WITHOUT_WILDCARDS.append(catagory.text)
+    for category in categories:
+        ALL_CATEGORIES.append(category.text)
+        if '*' not in category:
+            CATEGORIES_WITHOUT_WILDCARDS.append(category.text)
 
 
 def handle_qa_pairs(question):
-    response = tf_idf(question, questions + CATEGORIES_WITHOUT_WILDCARDS)
+    # tf_idf(questions + CATEGORIES_WITHOUT_WILDCARDS)
+    response = find_most_similar_document(question, questions + CATEGORIES_WITHOUT_WILDCARDS)
 
     if response['similarity'] == 0:
         print("I'm sorry, I'm not sure what you mean :( Can you rephrase it?")
@@ -57,20 +58,23 @@ def load_qa_pairs(dir='qapairs.csv'):
     file.close()
 
 
-def tf_idf(inp, allQuestions):
-    # if inp is str:
-    sentences = [inp] + allQuestions
-    # else:
-    #     sentences = inp + allQuestions
-
+def tf_idf(documents):
     vectorizer = text.TfidfVectorizer()
     # Calculates tf.idf
-    vectors = vectorizer.fit_transform(sentences)
-    # Gets list of all words used in each sentence
-    bagOfWords = vectorizer.get_feature_names()
+    vectors = vectorizer.fit_transform(documents)
+    words = vectorizer.get_feature_names()
     dense = vectors.todense()
     denselist = dense.tolist()
-    df = pandas.DataFrame(denselist, columns=bagOfWords)
+    df = pandas.DataFrame(denselist, columns=words)
+    print(df)
+
+
+def find_most_similar_document(inp, allQuestions):
+    sentences = [inp] + allQuestions
+
+    vectorizer = text.TfidfVectorizer()
+    # Calculates tf*idf
+    vectors = vectorizer.fit_transform(sentences)
     css = cosine_similarity(vectors)
 
     # Gets senetence with the highest similarity
@@ -90,11 +94,11 @@ def tf_idf(inp, allQuestions):
 
 def process_input(userInput):
     responseAgent = "aiml"
-
+    userInput = userInput.translate(str.maketrans('', '', string.punctuation))
     if responseAgent == "aiml":
         answer = kernal.respond(userInput)
 
-        if '#' == answer[0]:
+        if '#' in answer[0]:
             params = answer.split('$')
             phrase = params[-1]
             cmd = params[0]

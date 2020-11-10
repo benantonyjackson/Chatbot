@@ -123,7 +123,7 @@
 
    <category>
     <pattern>*</pattern>
-       <template><think>#3$<star index="1"></star></think></template>
+       <template>#3$<star index="1"></star></template>
     </category>
 
 </aiml>
