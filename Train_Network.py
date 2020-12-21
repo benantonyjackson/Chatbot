@@ -27,3 +27,5 @@ model = keras.Sequential([
 model.compile(Adam(lr=.0001), loss="categorical_crossentropy", metrics=["accuracy"])
 
 model.fit_generator(train_batches, validation_data=valid_batches, epochs=5, verbose=2)
+
+model.save("model.h5")
