@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import string
 from autocorrect import Speller
 
+
 from qapairs import QApairs
 
 ALL_CATEGORIES = []
