@@ -1,0 +1,5 @@
+Bears:
+https://github.com/naveenchanakya/bear-classifier
+
+Dogs and Wolves:
+https://www.kaggle.com/harishvutukuri/dogs-vs-wolves

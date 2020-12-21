@@ -1,5 +1,4 @@
 import requests
-from html.parser import HTMLParser
 from bs4 import BeautifulSoup
 import wikia
 
@@ -56,26 +55,22 @@ class WitcherWikiParser:
 
         self.ALL_ENEMIES = allEnemies
 
-    def get_beast_weaknesses(self, beast):
-        if beast.lower() == "wargs" or beast.lower() == "warg":
-            # TODO Fix titling issues with wolves
-            beast = "Wolves"
-        if beast.lower() == "lubberkin" or beast.lower() == "lubberkins":
-            # TODO Fix titling issues with wolves
-            beast = "Botchling"
-        if beast.lower() == "kikimore" or beast.lower() == "kikimores":
-            return ['There is more that one type of kikimore',
-                    'Implement a follow up question to ask which type of kikimore']
-        if beast.lower() == "fugas":
-            # TODO See if you can find a combat guide for Fugas
-            return ['Sorry, I do not know how best to fight Fugas. Would you like to know a bit more about Fugas?']
-        if beast.lower() == "godling":
-            return ['You do not need to fight Godlings at any point. Would you like to learn more about Goldings']
-        if beast.lower() == "dettlaff van der eretein":
-            # TODO See if you can find a combat guide for fighting Dettlaff
-            return ["Sorry, I'm not quite sure how best to fight Dettlaff. Would you like to learn more about Detlaff?"]
+    def get_enemy_weaknesses(self, enemy):
+        if enemy.lower() == "wargs" or enemy.lower() == "warg":
+            enemy = "Wolves"
+        if enemy.lower() == "lubberkin" or enemy.lower() == "lubberkins":
+            enemy = "Botchling"
+        if enemy.lower() == "kikimore" or enemy.lower() == "kikimores":
+            enemy = 'kikimore warrior'
+        if enemy == 'fugas':
+            return ['Sorry, I do not know how best to fight Fugas.']
+        if enemy.lower() == "godling":
+            return ['You do not need to fight Godlings at any point.']
+        if enemy.lower() == "dettlaff van der eretein":
 
-        r = requests.get(self.ENEMY_MAP[beast.lower()])
+            return ["Sorry, I'm not quite sure how best to fight Dettlaff."]
+
+        r = requests.get(self.ENEMY_MAP[enemy.lower()])
 
         soup = BeautifulSoup(r.content, "lxml")
         mydivs = soup.findAll("div", {"data-source": "Susceptibility"})

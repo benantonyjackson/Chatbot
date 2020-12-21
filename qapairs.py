@@ -2,7 +2,6 @@ from csv import reader
 
 
 class QApairs:
-
     def __init__(self):
         self.questions = []
         self.answers = []

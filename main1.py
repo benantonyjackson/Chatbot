@@ -1,14 +1,9 @@
 import aiml
 from Witcher_Wiki_Parser import WitcherWikiParser
-import numpy as np
 from sklearn.feature_extraction import text
 from sklearn.metrics.pairwise import cosine_similarity
-import math
-import pandas
 from bs4 import BeautifulSoup
 import string
-from PyDictionary import PyDictionary
-from spellchecker import spellchecker
 from autocorrect import Speller
 
 from qapairs import QApairs
@@ -34,12 +29,11 @@ def get_all_patterns():
 
 # Employs different techniques to find the most similar question
 def find_most_similar_question(question):
-    # tf_idf(questions + CATEGORIES_WITHOUT_WILDCARDS)
     response = find_most_similar_document(question, qapairs.questions + CATEGORIES_WITHOUT_WILDCARDS)
 
     # If the similarity is 0 then an appropriate match was not found
     if response['similarity'] == 0:
-        print("I'm sorry, I'm not sure what you mean :( Can you rephrase it?")
+        print("I'm sorry, I'm not sure what you mean. Can you rephrase it?")
     else:
         # Checks if the most similar response is a qa pair or a pattern without a wild card
         if response['index'] < len(qapairs.questions):
@@ -47,18 +41,7 @@ def find_most_similar_question(question):
             print(qapairs.answers[response['index']].replace(". ", ".\n"))
         else:
             # If the most similar result is a pattern without a wild card, input the pattern into the chat bot
-            process_input(ALL_CATEGORIES[response['index'] - len(qapairs.questions)])
-
-
-def tf_idf(documents):
-    vectorizer = text.TfidfVectorizer()
-    # Calculates tf.idf
-    vectors = vectorizer.fit_transform(documents)
-    words = vectorizer.get_feature_names()
-    dense = vectors.todense()
-    denselist = dense.tolist()
-    df = pandas.DataFrame(denselist, columns=words)
-    print(df)
+            process_input(CATEGORIES_WITHOUT_WILDCARDS[response['index'] - len(qapairs.questions)])
 
 
 # Uses cosine similarity to find the most similar document to the input
@@ -69,7 +52,6 @@ def find_most_similar_document(inp, allQuestions):
     # Calculates tf-idf
     vectorizer = text.TfidfVectorizer()
     vectors = vectorizer.fit_transform(sentences)
-
     css = cosine_similarity(vectors)
 
     # Gets the cosine similarity matrix for the input and strips the similarity score for its self
@@ -92,7 +74,7 @@ def spell_check_sentence(inp):
     spell = Speller(lang='en')
 
     # Defines a list of valid in this context that would likely get picked up by the spell checker package
-    wordsToIgnore = ['chatbot', 'witcher', 'geralt', 'rivia', 'warg']
+    wordsToIgnore = ['chatbot', 'witcher', 'geralt', 'rivia', 'warg', 'fugas']
 
     wordsToIgnore += parser.ALL_ENEMIES
 
@@ -109,6 +91,12 @@ def spell_check_sentence(inp):
 
 def get_enemy_description(inp, parser):
     try:
+        words = inp.split(' ')
+
+        if words not in parser.ALL_ENEMIES and len(words) > 1:
+            for word in words:
+                if word in parser.ALL_ENEMIES:
+                    inp = word
         print(parser.get_summary(inp))
     except (Exception):
         print("Sorry I'm not sure what a '" + inp + "' is. Try asking something else")
@@ -123,7 +111,7 @@ def get_enemy_weaknesses(inp, parser):
                 if word in parser.ALL_ENEMIES:
                     inp = word
 
-        weaknesses = parser.get_beast_weaknesses(inp)
+        weaknesses = parser.get_enemy_weaknesses(inp)
         print("A " + inp + " is weak to:")
         for weakness in weaknesses:
             print(weakness)
