@@ -11,7 +11,7 @@ train_path = 'dataset/train'
 test_path = 'dataset/test'
 valid_path = 'dataset/validate'
 
-classes = ['bears', 'Dogs', 'Wolves']
+classes = ['bears', 'swords', 'wolves']
 
 train_batches = ImageDataGenerator().flow_from_directory(train_path, classes=classes, target_size=(224, 224))
 test_batches = ImageDataGenerator().flow_from_directory(test_path, classes=classes, target_size=(224, 224))
@@ -26,6 +26,6 @@ model = keras.Sequential([
 
 model.compile(Adam(lr=.0001), loss="categorical_crossentropy", metrics=["accuracy"])
 
-model.fit_generator(train_batches, validation_data=valid_batches, epochs=5, verbose=2)
+model.fit_generator(train_batches, validation_data=valid_batches, epochs=15, verbose=2)
 
 model.save("model.h5")

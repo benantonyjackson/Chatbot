@@ -2,8 +2,10 @@ from keras.preprocessing.image import ImageDataGenerator
 from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.preprocessing import image
 
 import matplotlib.pyplot as plt
+import numpy as np
 
 from tensorflow.keras.models import load_model
 
@@ -15,7 +17,7 @@ class TrainedModel:
     def __init__(self, path="model.h5"):
         self.path = path
         self.model = load_model(path)
-        self.classes = ['bears', 'Dogs', 'Wolves']
+        self.classes = ['bears', 'swords', 'wolves']
         self.test_path = 'dataset/test'
 
     def test_against_testing_set(self):
@@ -25,14 +27,28 @@ class TrainedModel:
 
         test_img, test_lables = next(test_batches)
 
-        print(test_img)
-        print(test_lables)
+        # print(test_img)
+        # print(test_lables)
 
         predictions = self.model.predict_generator(test_batches, steps=1, verbose=0)
         print(predictions)
 
+    def predict_local_image(self, path):
+        #https://stackoverflow.com/questions/43469281/how-to-predict-input-image-using-trained-model-in-keras
+        img = image.load_img(path, target_size=(224, 224))
+        x = image.img_to_array(img)
+        x = np.expand_dims(x, axis=0)
+
+        images = np.vstack([x])
+        classes = self.model.predict_classes(images, batch_size=10)
+        print(self.classes[classes[0]] + ": " + path)
+
 
 if __name__ == "__main__":
     tm = TrainedModel()
-
-    tm.test_against_testing_set()
+    tm.predict_local_image("dataset/test/bears/_094a0547.jpg")
+    tm.predict_local_image("dataset/test/wolves/_106348479_mediaitem106348478.jpg")
+    tm.predict_local_image("dataset/test/swords/03_sword_polishing_night_03.jpg")
+    tm.predict_local_image("dataset/test/swords/4c528a1b.jpg")
+    tm.predict_local_image("dataset/test/swords/3hnds.jpeg")
+    tm.predict_local_image("dataset/test/swords/06_weapon.jpg")
