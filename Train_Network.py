@@ -20,8 +20,12 @@ valid_batches = ImageDataGenerator().flow_from_directory(valid_path, classes=cla
 
 model = keras.Sequential([
     layers.Conv2D(32, (3, 3), activation="relu", input_shape=(224, 224, 3)),
+    layers.Conv2D(32, kernel_size=(3, 3), activation="relu"),
+    layers.MaxPooling2D(pool_size=(2, 2)),
+    layers.Conv2D(64, kernel_size=(3, 3), activation="relu"),
+    layers.MaxPooling2D(pool_size=(2, 2)),
     layers.Flatten(),
-    layers.Dense(len(classes), activation="softmax")
+    layers.Dense(len(classes), activation="softmax"),
 ])
 
 model.compile(Adam(lr=.0001), loss="categorical_crossentropy", metrics=["accuracy"])
