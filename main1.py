@@ -147,7 +147,6 @@ def process_input(userInput):
             if cmd == "#3":
                 # QA pairs
                 find_most_similar_question(params[1])
-
         else:
             print(answer)
 
