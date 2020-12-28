@@ -1,4 +1,4 @@
-from keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.optimizers import Adam
@@ -53,6 +53,7 @@ class TrainedModel:
 if __name__ == "__main__":
     tm = TrainedModel()
     tm.test_against_testing_set()
+    tm.predict_local_image("Figure_1.png")
     # tm.predict_local_image("dataset/test/bears/_094a0547.jpg")
     # tm.predict_local_image("dataset/test/bears/_83938024_83938023.jpg")
     # tm.predict_local_image("dataset/test/bears/_102722447_sophiebear1.jpg")
