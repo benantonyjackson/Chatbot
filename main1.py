@@ -6,11 +6,21 @@ from bs4 import BeautifulSoup
 import string
 from autocorrect import Speller
 
+from TrainedModel import TrainedModel
+import easygui
+
+import wx
+
+
+import tkinter as tk
+from tkinter import filedialog
 
 from qapairs import QApairs
 
 ALL_CATEGORIES = []
 CATEGORIES_WITHOUT_WILDCARDS = []
+
+tm = TrainedModel()
 
 qapairs = QApairs()
 
@@ -90,6 +100,14 @@ def spell_check_sentence(inp):
     return ret[:-1]
 
 
+def get_file_path():
+    # https://stackoverflow.com/questions/9319317/quick-and-easy-file-dialog-in-python
+
+    path = easygui.fileopenbox()
+
+    return path
+
+
 def get_enemy_description(inp, parser):
     try:
         words = inp.split(' ')
@@ -120,6 +138,13 @@ def get_enemy_weaknesses(inp, parser):
         print("Sorry I'm not sure what a '" + inp + "' is. Try asking something else")
 
 
+def classify_image(filepath=""):
+    print("Started")
+    if filepath == "":
+        filepath = get_file_path()
+
+    print(tm.predict_local_image(path=filepath))
+
 def process_input(userInput):
     responseAgent = "aiml"
 
@@ -147,6 +172,8 @@ def process_input(userInput):
             if cmd == "#3":
                 # QA pairs
                 find_most_similar_question(params[1])
+            if cmd == "#4":
+                classify_image()
         else:
             print(answer)
 

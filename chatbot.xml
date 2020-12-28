@@ -46,6 +46,11 @@
         <template><srai>EXIT</srai></template>
     </category>
 
+     <category>
+        <pattern> BYE </pattern>
+        <template><srai>EXIT</srai></template>
+    </category>
+
     <!-- set name -->
 
     <category>
@@ -110,6 +115,13 @@
     <category>
         <pattern>HOW DO I BEAT *</pattern>
         <template>#2$<star index="1"></star></template>
+    </category>
+
+    <!-- classify image -->
+
+    <category>
+        <pattern>WHATS IN THIS IMAGE PICTURE PHOTO</pattern>
+        <template>#4$<star index="1"></star></template>
     </category>
 
     <!-- default reaction -->

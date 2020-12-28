@@ -34,10 +34,16 @@ from tensorflow.python.client import device_lib
 
 
 # define the standalone discriminator model
-def define_discriminator(in_shape=(32, 32, 3)):
+def define_discriminator(in_shape=(128, 128, 3)):
     model = Sequential()
     # normal
     model.add(Conv2D(64, (3, 3), padding='same', input_shape=in_shape))
+    model.add(LeakyReLU(alpha=0.2))
+    # downsample
+    model.add(Conv2D(128, (3, 3), strides=(2, 2), padding='same'))
+    model.add(LeakyReLU(alpha=0.2))
+    # downsample
+    model.add(Conv2D(128, (3, 3), strides=(2, 2), padding='same'))
     model.add(LeakyReLU(alpha=0.2))
     # downsample
     model.add(Conv2D(128, (3, 3), strides=(2, 2), padding='same'))
@@ -62,18 +68,25 @@ def define_discriminator(in_shape=(32, 32, 3)):
 def define_generator(latent_dim, input_width=256, input_height=256, n_images=64):
     model = Sequential(name="generator")
     # foundation for 4x4 image
-    n_nodes = n_images * (input_width / 8) * (input_height / 8)
+    n_nodes = n_images * 4 * 4
     model.add(Dense(n_nodes, input_dim=latent_dim))
     model.add(LeakyReLU(alpha=0.2))
-    model.add(Reshape((int(input_width / 8), int(input_height / 8), n_images)))
-    # upsample to 64*64
+    # model.add(Reshape((int(input_width / 8), int(input_height / 8), n_images)))
+    model.add(Reshape((4, 4, n_images)))
+    # upsample to 8*8
     model.add(Conv2DTranspose(128, (4,4), strides=(2,2), padding='same'))
+    model.add(LeakyReLU(alpha=0.2))
+    # upsample to 16*16
+    model.add(Conv2DTranspose(128, (4,4), strides=(2,2), padding='same'))
+    model.add(LeakyReLU(alpha=0.2))
+    # upsample to 32*32
+    model.add(Conv2DTranspose(128, (4,4), strides=(2,2), padding='same'))
+    model.add(LeakyReLU(alpha=0.2))
+    # upsample to 64*64
+    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same'))
     model.add(LeakyReLU(alpha=0.2))
     # upsample to 128*128
-    model.add(Conv2DTranspose(128, (4,4), strides=(2,2), padding='same'))
-    model.add(LeakyReLU(alpha=0.2))
-    # upsample to 256*256
-    model.add(Conv2DTranspose(128, (4,4), strides=(2,2), padding='same'))
+    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same'))
     model.add(LeakyReLU(alpha=0.2))
     # output layer
     model.add(Conv2D(3, (3,3), activation='tanh', padding='same'))
@@ -97,7 +110,7 @@ def define_gan(g_model, d_model):
 
 
 # load and prepare cifar10 training images
-def load_real_samples():
+def load_real_samples(input_width = 128, input_height = 128):
     # # load cifar10 dataset
     # (trainX, _), (_, _) = load_data()
     # # convert from unsigned ints to floats
@@ -107,9 +120,6 @@ def load_real_samples():
     # return X
 
     train_path = 'dataset/train'
-
-    input_width = 32
-    input_height = 32
 
     classes = ['bears', 'wolves']
     images = []
@@ -239,7 +249,7 @@ def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=10, n_batch
             # update discriminator model weights
             d_loss1, _ = d_model.train_on_batch(X_real, y_real)
             # generate 'fake' examples
-            X_fake, y_fake = generate_fake_samples(g_model, latent_dim, half_batch * 256)
+            X_fake, y_fake = generate_fake_samples(g_model, latent_dim, half_batch * 16)
             # update discriminator model weights
             d_loss2, _ = d_model.train_on_batch(X_fake, y_fake)
             # prepare points in latent space as input for the generator
@@ -263,18 +273,18 @@ if __name__ == "__main__":
     # tensorflow.keras.backend.set_session(sess)
     print("GPUs:" + str(tf.config.experimental.list_physical_devices('GPU')))
 
-    number_of_images = 256
+    number_of_images = 4
 
     # size of the latent space
     latent_dim = 100
     # create the discriminator
     d_model = define_discriminator()
     # create the generator
-    g_model = define_generator(latent_dim, n_images=number_of_images, input_height=32, input_width=32)
+    g_model = define_generator(latent_dim, n_images=number_of_images, input_height=128, input_width=128)
     # create the gan
     gan_model = define_gan(g_model, d_model)
     # load image data
     dataset = load_real_samples()
     # train model
-    train(g_model, d_model, gan_model, dataset, latent_dim, n_batch=8, n_epochs=1000)
+    train(g_model, d_model, gan_model, dataset, latent_dim, n_batch=16, n_epochs=1000)
     print("Done")
