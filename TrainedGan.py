@@ -8,9 +8,8 @@ import random
 
 class TrainedGan:
 
-    def __init__(self, model_dir='generator_model_100.h5'):
+    def __init__(self, model_dir='generator_model_130.h5'):
         self.model = load_model(model_dir)
-        load_model(model_dir)
 
     def load_model(self, model_dir):
         # load model

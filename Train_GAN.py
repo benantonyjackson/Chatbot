@@ -17,6 +17,7 @@ from tensorflow.keras.layers import Dropout
 from matplotlib import pyplot
 
 from TrainedModel import TrainedModel
+from tensorflow.keras.models import load_model
 
 import numpy as np
 
@@ -205,7 +206,7 @@ def summarize_performance(epoch, g_model, d_model, dataset, latent_dim, n_sample
     # prepare fake examples
     x_fake, y_fake = generate_fake_samples(g_model, latent_dim, n_samples)
     # evaluate discriminator on fake examples
-    _, acc_fake = d_model.evaluate(x_fake, y_real, verbose=0)
+    _, acc_fake = d_model.evaluate(x_fake, y_fake, verbose=0)
     # summarize discriminator performance
     print('>Accuracy real: %.0f%%, fake: %.0f%%' % (acc_real * 100, acc_fake * 100))
     # save plot
@@ -280,7 +281,8 @@ if __name__ == "__main__":
     # create the discriminator
     d_model = define_discriminator()
     # create the generator
-    g_model = define_generator(latent_dim, n_images=number_of_images, input_height=128, input_width=128)
+    # g_model = define_generator(latent_dim, n_images=number_of_images, input_height=128, input_width=128)
+    g_model = load_model('generator_model_140.h5')
     # create the gan
     gan_model = define_gan(g_model, d_model)
     # load image data
