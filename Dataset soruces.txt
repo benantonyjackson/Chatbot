@@ -1,5 +1,6 @@
 Bears:
 https://github.com/naveenchanakya/bear-classifier
+https://www.kaggle.com/superficiallybot/iucn-animal-species
 
 Dogs and Wolves:
 https://www.kaggle.com/harishvutukuri/dogs-vs-wolves

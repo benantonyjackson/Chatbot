@@ -6,9 +6,18 @@ from numpy.random import randint
 
 import random
 
-class TrainedGan:
+"""
+Title: Keras - Python Deep Learning Neural Network API
+Author: Jason Brownlee
+Date: 27.12.2020
+Code version: 
+Availability:
+https://machinelearningmastery.com/how-to-develop-a-generative-adversarial-network-for-a-cifar-10-small-object-photographs-from-scratch/
+"""
 
-    def __init__(self, model_dir='generator_model_130.h5'):
+
+class TrainedGan:
+    def __init__(self, model_dir='generator_model_230.h5'):
         self.model = load_model(model_dir)
 
     def load_model(self, model_dir):

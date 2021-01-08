@@ -1,3 +1,5 @@
+import random
+
 from numpy import expand_dims
 from numpy import zeros
 from numpy import ones
@@ -15,6 +17,8 @@ from tensorflow.keras.layers import Conv2DTranspose
 from tensorflow.keras.layers import LeakyReLU
 from tensorflow.keras.layers import Dropout
 from matplotlib import pyplot
+from tensorflow.keras.layers import BatchNormalization
+from tensorflow.keras.initializers import RandomNormal
 
 from TrainedModel import TrainedModel
 from tensorflow.keras.models import load_model
@@ -34,30 +38,47 @@ import tensorflow as tf
 from tensorflow.python.client import device_lib
 
 
+"""
+Title: Keras - Python Deep Learning Neural Network API
+Author: Jason Brownlee
+Date: 27.12.2020
+Code version: 
+Availability:
+https://machinelearningmastery.com/how-to-develop-a-generative-adversarial-network-for-a-cifar-10-small-object-photographs-from-scratch/
+"""
+
+"""
+Title: Keras - Python Deep Learning Neural Network API
+Author: Jordan Bird
+Date: 07.01.2021
+Code version: No version number available 
+Availability: 
+https://github.com/jordan-bird/art-DCGAN-Keras
+"""
+
+
+# Best practice initialiser for GANS
+# initialWeights = RandomNormal(mean=0.0, stddev=0.02, seed=None)
+
+
 # define the standalone discriminator model
-def define_discriminator(in_shape=(128, 128, 3)):
+def define_discriminator(in_shape=(128,128,3)):
     model = Sequential()
-    # normal
-    model.add(Conv2D(64, (3, 3), padding='same', input_shape=in_shape))
+    model.add(Conv2D(64, (3,3), strides=(2, 2), padding='same', input_shape=in_shape))
     model.add(LeakyReLU(alpha=0.2))
-    # downsample
-    model.add(Conv2D(128, (3, 3), strides=(2, 2), padding='same'))
+    model.add(Conv2D(64, (3,3), strides=(2, 2), padding='same'))
     model.add(LeakyReLU(alpha=0.2))
-    # downsample
-    model.add(Conv2D(128, (3, 3), strides=(2, 2), padding='same'))
+    # model.add(BatchNormalization())
+    model.add(Conv2D(64, (3,3), strides=(2, 2), padding='same'))
     model.add(LeakyReLU(alpha=0.2))
-    # downsample
-    model.add(Conv2D(128, (3, 3), strides=(2, 2), padding='same'))
+    # model.add(BatchNormalization())
+    model.add(Conv2D(64, (3,3), strides=(2, 2), padding='same'))
     model.add(LeakyReLU(alpha=0.2))
-    # downsample
-    model.add(Conv2D(128, (3, 3), strides=(2, 2), padding='same'))
+    # model.add(BatchNormalization())
+    model.add(Conv2D(64, (3,3), strides=(2, 2), padding='same'))
     model.add(LeakyReLU(alpha=0.2))
-    # downsample
-    model.add(Conv2D(256, (3, 3), strides=(2, 2), padding='same'))
-    model.add(LeakyReLU(alpha=0.2))
-    # classifier
+    # model.add(BatchNormalization())
     model.add(Flatten())
-    model.add(Dropout(0.4))
     model.add(Dense(1, activation='sigmoid'))
     # compile model
     opt = Adam(lr=0.0002, beta_1=0.5)
@@ -66,31 +87,30 @@ def define_discriminator(in_shape=(128, 128, 3)):
 
 
 # define the standalone generator model
-def define_generator(latent_dim, input_width=256, input_height=256, n_images=64):
-    model = Sequential(name="generator")
+def define_generator(latent_dim, n_images, input_height=32, input_width=32):
+    model = Sequential()
     # foundation for 4x4 image
-    n_nodes = n_images * 4 * 4
+    n_nodes = 256 * 4 * 4
     model.add(Dense(n_nodes, input_dim=latent_dim))
     model.add(LeakyReLU(alpha=0.2))
-    # model.add(Reshape((int(input_width / 8), int(input_height / 8), n_images)))
-    model.add(Reshape((4, 4, n_images)))
-    # upsample to 8*8
-    model.add(Conv2DTranspose(128, (4,4), strides=(2,2), padding='same'))
+    model.add(Reshape((4, 4, 256)))
+    # upsample to 8x8
+    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
     model.add(LeakyReLU(alpha=0.2))
-    # upsample to 16*16
-    model.add(Conv2DTranspose(128, (4,4), strides=(2,2), padding='same'))
+    # upsample to 16x16
+    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
     model.add(LeakyReLU(alpha=0.2))
-    # upsample to 32*32
-    model.add(Conv2DTranspose(128, (4,4), strides=(2,2), padding='same'))
+    # upsample to 32x32
+    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
     model.add(LeakyReLU(alpha=0.2))
-    # upsample to 64*64
-    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same'))
+    # upsample to 64x64
+    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
     model.add(LeakyReLU(alpha=0.2))
-    # upsample to 128*128
-    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same'))
+    # upsample to 128x128
+    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
     model.add(LeakyReLU(alpha=0.2))
     # output layer
-    model.add(Conv2D(3, (3,3), activation='tanh', padding='same'))
+    model.add(Conv2D(3, (3, 3), activation='tanh', padding='same'))
     return model
 
 
@@ -110,6 +130,26 @@ def define_gan(g_model, d_model):
     return model
 
 
+# https://stackoverflow.com/questions/22937589/how-to-add-noise-gaussian-salt-and-pepper-etc-to-image-in-python-with-opencv
+def sp_noise(image, prob):
+    '''
+    Add salt and pepper noise to image
+    prob: Probability of the noise
+    '''
+    output = np.zeros(image.shape,np.uint8)
+    thres = 1 - prob
+    for i in range(image.shape[0]):
+        for j in range(image.shape[1]):
+            rdn = random.random()
+            if rdn < prob:
+                output[i][j] = 0
+            elif rdn > thres:
+                output[i][j] = 255
+            else:
+                output[i][j] = image[i][j]
+    return output
+
+
 # load and prepare cifar10 training images
 def load_real_samples(input_width = 128, input_height = 128):
     # # load cifar10 dataset
@@ -122,7 +162,10 @@ def load_real_samples(input_width = 128, input_height = 128):
 
     train_path = 'dataset/train'
 
-    classes = ['bears', 'wolves']
+    classes = ['bears']
+
+    # classes = ['bears', 'wolves', 'dogs', 'swords', 'African Elephant', 'Amur Leopard', 'Arctic Fox', 'Black Rhino',
+    #            'Black Spider Monkey', 'Bluefin Tuna', 'Chimpanzee', 'European Rabbit', 'Orangutan']
     images = []
 
     for i in range(0, len(classes)):
@@ -133,9 +176,10 @@ def load_real_samples(input_width = 128, input_height = 128):
             try:
                 image = (cv2.imread(train_path + "/" + classes[i] + "/" + image_name, 1))
                 resized_image = cv2.resize(image, (input_width, input_height), interpolation=cv2.INTER_AREA)
+                # img_with_noise = sp_noise(resized_image, 0.05)
                 scaled_image = (resized_image - 127.5) / 127.5
                 images.append(scaled_image)
-
+                #
                 # X = (scaled_image + 1) / 2.0
                 # # plot the result
                 # pyplot.imshow(X)
@@ -155,7 +199,10 @@ def generate_real_samples(dataset, n_samples):
     # retrieve selected images
     X = dataset[ix]
     # generate 'real' class labels (1)
-    y = ones((n_samples, 1))
+    # y = ones((n_samples, 1))
+
+    y = np.full((n_samples, 1), 1)
+
     return X, y
 
 
@@ -250,7 +297,7 @@ def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=10, n_batch
             # update discriminator model weights
             d_loss1, _ = d_model.train_on_batch(X_real, y_real)
             # generate 'fake' examples
-            X_fake, y_fake = generate_fake_samples(g_model, latent_dim, half_batch * 16)
+            X_fake, y_fake = generate_fake_samples(g_model, latent_dim, half_batch)
             # update discriminator model weights
             d_loss2, _ = d_model.train_on_batch(X_fake, y_fake)
             # prepare points in latent space as input for the generator
@@ -274,19 +321,19 @@ if __name__ == "__main__":
     # tensorflow.keras.backend.set_session(sess)
     print("GPUs:" + str(tf.config.experimental.list_physical_devices('GPU')))
 
-    number_of_images = 4
+    number_of_images = 256
 
     # size of the latent space
-    latent_dim = 100
+    latent_dim = 72000
     # create the discriminator
     d_model = define_discriminator()
     # create the generator
-    # g_model = define_generator(latent_dim, n_images=number_of_images, input_height=128, input_width=128)
-    g_model = load_model('generator_model_140.h5')
+    g_model = define_generator(latent_dim, n_images=number_of_images, input_height=128, input_width=128)
+    # g_model = load_model('generator_model_020.h5')
     # create the gan
     gan_model = define_gan(g_model, d_model)
     # load image data
-    dataset = load_real_samples()
+    dataset = load_real_samples(input_width=128, input_height=128)
     # train model
-    train(g_model, d_model, gan_model, dataset, latent_dim, n_batch=16, n_epochs=1000)
+    train(g_model, d_model, gan_model, dataset, latent_dim, n_batch=8, n_epochs=1000)
     print("Done")

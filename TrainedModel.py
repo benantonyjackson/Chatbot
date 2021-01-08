@@ -10,8 +10,16 @@ import numpy as np
 
 from tensorflow.keras.models import load_model
 
-# Credit for CNN stuff https://www.youtube.com/playlist?list=PLZbbT5o_s2xrL4F90oKfloWM7ExXT_U_b
-
+""" 
+Title: Keras - Python Deep Learning Neural Network API
+Author: Mandy
+Date: 21.12.2020
+Code version: v1.0.3
+Availability: 
+https://www.youtube.com/playlist?list=PLZbbT5o_s2xrL4F90oKfloWM7ExXT_U_b
+https://deeplizard.com/learn/playlist/PLZbbT5o_s2xrwRnXk_yCPtnqqo4_u2YGL
+https://deeplizard.com/resources
+"""
 
 class TrainedModel:
 
@@ -53,7 +61,7 @@ class TrainedModel:
 if __name__ == "__main__":
     tm = TrainedModel()
     tm.test_against_testing_set()
-    tm.predict_local_image("Figure_1.png")
+    # tm.predict_local_image("Figure_1.png")
     # tm.predict_local_image("dataset/test/bears/_094a0547.jpg")
     # tm.predict_local_image("dataset/test/bears/_83938024_83938023.jpg")
     # tm.predict_local_image("dataset/test/bears/_102722447_sophiebear1.jpg")
