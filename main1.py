@@ -102,10 +102,7 @@ def spell_check_sentence(inp):
 
 def get_file_path():
     # https://stackoverflow.com/questions/9319317/quick-and-easy-file-dialog-in-python
-
-    path = easygui.fileopenbox()
-
-    return path
+    return easygui.fileopenbox()
 
 
 def get_enemy_description(inp, parser):
@@ -144,6 +141,7 @@ def classify_image(filepath=""):
         filepath = get_file_path()
 
     print(tm.predict_local_image(path=filepath))
+
 
 def process_input(userInput):
     responseAgent = "aiml"

@@ -62,26 +62,28 @@ https://github.com/jordan-bird/art-DCGAN-Keras
 
 
 # define the standalone discriminator model
-def define_discriminator(in_shape=(128,128,3)):
+def define_discriminator(in_shape=(256,256,3)):
+    hidden_nodes = 256
     model = Sequential()
-    model.add(Conv2D(64, (3,3), strides=(2, 2), padding='same', input_shape=in_shape))
+    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same', input_shape=in_shape))
     model.add(LeakyReLU(alpha=0.2))
-    model.add(Conv2D(64, (3,3), strides=(2, 2), padding='same'))
-    model.add(LeakyReLU(alpha=0.2))
-    # model.add(BatchNormalization())
-    model.add(Conv2D(64, (3,3), strides=(2, 2), padding='same'))
+    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same'))
     model.add(LeakyReLU(alpha=0.2))
     # model.add(BatchNormalization())
-    model.add(Conv2D(64, (3,3), strides=(2, 2), padding='same'))
+    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same'))
     model.add(LeakyReLU(alpha=0.2))
     # model.add(BatchNormalization())
-    model.add(Conv2D(64, (3,3), strides=(2, 2), padding='same'))
+    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same'))
+    model.add(LeakyReLU(alpha=0.2))
+    # model.add(BatchNormalization())
+    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same'))
     model.add(LeakyReLU(alpha=0.2))
     # model.add(BatchNormalization())
     model.add(Flatten())
     model.add(Dense(1, activation='sigmoid'))
     # compile model
-    opt = Adam(lr=0.0002, beta_1=0.5)
+    # opt = Adam(lr=0.0002, beta_1=0.5)
+    opt = Adam(lr=0.00005, beta_1=0.5)
     model.compile(loss='binary_crossentropy', optimizer=opt, metrics=['accuracy'])
     return model
 
@@ -97,18 +99,35 @@ def define_generator(latent_dim, n_images, input_height=32, input_width=32):
     # upsample to 8x8
     model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
     model.add(LeakyReLU(alpha=0.2))
+    model.add(BatchNormalization())
     # upsample to 16x16
     model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
     model.add(LeakyReLU(alpha=0.2))
+    model.add(BatchNormalization())
     # upsample to 32x32
     model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
     model.add(LeakyReLU(alpha=0.2))
+    model.add(BatchNormalization())
     # upsample to 64x64
     model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
     model.add(LeakyReLU(alpha=0.2))
+    model.add(BatchNormalization())
+
+    # model.add(Conv2DTranspose(3, (3, 3), activation='tanh', padding='same'))
+    # model.add(LeakyReLU(alpha=0.2))
+    # model.add(BatchNormalization())
+
     # upsample to 128x128
     model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
     model.add(LeakyReLU(alpha=0.2))
+    model.add(BatchNormalization())
+    # upsample to 256x256
+    # model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
+    # model.add(LeakyReLU(alpha=0.2))
+
+    # model.add(Conv2DTranspose(3, (3, 3), activation='tanh', padding='same'))
+    # model.add(LeakyReLU(alpha=0.2))
+
     # output layer
     model.add(Conv2D(3, (3, 3), activation='tanh', padding='same'))
     return model
@@ -162,7 +181,7 @@ def load_real_samples(input_width = 128, input_height = 128):
 
     train_path = 'dataset/train'
 
-    classes = ['bears']
+    classes = ['bear_gan']
 
     # classes = ['bears', 'wolves', 'dogs', 'swords', 'African Elephant', 'Amur Leopard', 'Arctic Fox', 'Black Rhino',
     #            'Black Spider Monkey', 'Bluefin Tuna', 'Chimpanzee', 'European Rabbit', 'Orangutan']
@@ -323,17 +342,20 @@ if __name__ == "__main__":
 
     number_of_images = 256
 
+    w = 128
+    h = 128
+
     # size of the latent space
     latent_dim = 72000
     # create the discriminator
-    d_model = define_discriminator()
+    d_model = define_discriminator(in_shape=(w,h,3))
     # create the generator
-    g_model = define_generator(latent_dim, n_images=number_of_images, input_height=128, input_width=128)
+    g_model = define_generator(latent_dim, n_images=number_of_images, input_height=h, input_width=w)
     # g_model = load_model('generator_model_020.h5')
     # create the gan
     gan_model = define_gan(g_model, d_model)
     # load image data
-    dataset = load_real_samples(input_width=128, input_height=128)
+    dataset = load_real_samples(input_width=w, input_height=h)
     # train model
     train(g_model, d_model, gan_model, dataset, latent_dim, n_batch=8, n_epochs=1000)
     print("Done")
