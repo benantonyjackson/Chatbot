@@ -8,7 +8,7 @@ from tensorflow.keras import layers
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.preprocessing import image
 from os import listdir
-
+from tensorflow.keras.applications.resnet50 import decode_predictions
 
 
 import matplotlib.pyplot as plt
@@ -50,8 +50,8 @@ class TrainedModel:
         x = np.expand_dims(x, axis=0)
 
         images = np.vstack([x])
-        classes = self.model.predict_classes(images, batch_size=10)
-        return self.classes[classes[0]]
+        predictions = self.model.predict(images, batch_size=10)
+        return self.classes[np.argmax(predictions[0])]
 
 
 if __name__ == "__main__":

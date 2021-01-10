@@ -67,18 +67,18 @@ https://github.com/jordan-bird/art-DCGAN-Keras
 def define_discriminator(in_shape=(256,256,3)):
     hidden_nodes = 256
     model = Sequential()
-    model.add(Conv2D(64, (3,3), strides=(2, 2), padding='same', input_shape=in_shape))
+    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same', input_shape=in_shape))
     model.add(LeakyReLU(alpha=0.2))
-    model.add(Conv2D(128, (3,3), strides=(2, 2), padding='same'))
-    model.add(LeakyReLU(alpha=0.2))
-    # model.add(BatchNormalization())
-    model.add(Conv2D(256, (3,3), strides=(1, 1), padding='same'))
+    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same'))
     model.add(LeakyReLU(alpha=0.2))
     # model.add(BatchNormalization())
-    model.add(Conv2D(512, (3,3), strides=(2, 2), padding='same'))
+    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same'))
     model.add(LeakyReLU(alpha=0.2))
     # model.add(BatchNormalization())
-    model.add(Conv2D(1024, (3,3), strides=(2, 2), padding='same'))
+    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same'))
+    model.add(LeakyReLU(alpha=0.2))
+    # model.add(BatchNormalization())
+    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same'))
     model.add(LeakyReLU(alpha=0.2))
     # model.add(BatchNormalization())
     model.add(Flatten())
@@ -94,26 +94,41 @@ def define_discriminator(in_shape=(256,256,3)):
 def define_generator(latent_dim, n_images, input_height=32, input_width=32):
     model = Sequential()
     # foundation for 4x4 image
-    n_nodes = 1024 * 8 * 8
+    n_nodes = 256 * 4 * 4
     model.add(Dense(n_nodes, input_dim=latent_dim))
     model.add(LeakyReLU(alpha=0.2))
-    model.add(Reshape((8, 8, 1024)))
+    model.add(Reshape((4, 4, 256)))
+    # upsample to 8x8
+    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
+    model.add(LeakyReLU(alpha=0.2))
+    model.add(BatchNormalization())
     # upsample to 16x16
-    model.add(Conv2DTranspose(512, (4, 4), strides=(2, 2), padding='same', activation='relu'))
+    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
     model.add(LeakyReLU(alpha=0.2))
     model.add(BatchNormalization())
     # upsample to 32x32
-    model.add(Conv2DTranspose(256, (4, 4), strides=(2, 2), padding='same', activation='relu'))
+    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
     model.add(LeakyReLU(alpha=0.2))
     model.add(BatchNormalization())
     # upsample to 64x64
     model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
     model.add(LeakyReLU(alpha=0.2))
     model.add(BatchNormalization())
+
+    # model.add(Conv2DTranspose(3, (3, 3), activation='tanh', padding='same'))
+    # model.add(LeakyReLU(alpha=0.2))
+    # model.add(BatchNormalization())
+
     # upsample to 128x128
-    model.add(Conv2DTranspose(64, (4, 4), strides=(2, 2), padding='same', activation='relu'))
+    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
     model.add(LeakyReLU(alpha=0.2))
     model.add(BatchNormalization())
+    # upsample to 256x256
+    # model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
+    # model.add(LeakyReLU(alpha=0.2))
+
+    # model.add(Conv2DTranspose(3, (3, 3), activation='tanh', padding='same'))
+    # model.add(LeakyReLU(alpha=0.2))
 
     # output layer
     model.add(Conv2D(3, (3, 3), activation='tanh', padding='same'))
@@ -131,7 +146,7 @@ def define_gan(g_model, d_model):
     # add the discriminator
     model.add(d_model)
     # compile model
-    opt = Adam(lr=0.0001, beta_1=0.5)
+    opt = Adam(lr=0.0002, beta_1=0.5)
     model.compile(loss='binary_crossentropy', optimizer=opt)
     return model
 
@@ -309,7 +324,7 @@ if __name__ == "__main__":
     h = 128
 
     # size of the latent space
-    latent_dim = 3000
+    latent_dim = 72000
     # create the discriminator
     d_model = define_discriminator(in_shape=(w,h,3))
     # create the generator
