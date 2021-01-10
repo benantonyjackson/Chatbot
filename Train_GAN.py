@@ -57,6 +57,8 @@ https://github.com/jordan-bird/art-DCGAN-Keras
 """
 
 
+# gan structure https://cpang4.github.io/gan/
+
 # Best practice initialiser for GANS
 # initialWeights = RandomNormal(mean=0.0, stddev=0.02, seed=None)
 
@@ -65,18 +67,18 @@ https://github.com/jordan-bird/art-DCGAN-Keras
 def define_discriminator(in_shape=(256,256,3)):
     hidden_nodes = 256
     model = Sequential()
-    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same', input_shape=in_shape))
+    model.add(Conv2D(64, (3,3), strides=(2, 2), padding='same', input_shape=in_shape))
     model.add(LeakyReLU(alpha=0.2))
-    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same'))
-    model.add(LeakyReLU(alpha=0.2))
-    # model.add(BatchNormalization())
-    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same'))
+    model.add(Conv2D(128, (3,3), strides=(2, 2), padding='same'))
     model.add(LeakyReLU(alpha=0.2))
     # model.add(BatchNormalization())
-    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same'))
+    model.add(Conv2D(256, (3,3), strides=(1, 1), padding='same'))
     model.add(LeakyReLU(alpha=0.2))
     # model.add(BatchNormalization())
-    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same'))
+    model.add(Conv2D(512, (3,3), strides=(2, 2), padding='same'))
+    model.add(LeakyReLU(alpha=0.2))
+    # model.add(BatchNormalization())
+    model.add(Conv2D(1024, (3,3), strides=(2, 2), padding='same'))
     model.add(LeakyReLU(alpha=0.2))
     # model.add(BatchNormalization())
     model.add(Flatten())
@@ -92,41 +94,26 @@ def define_discriminator(in_shape=(256,256,3)):
 def define_generator(latent_dim, n_images, input_height=32, input_width=32):
     model = Sequential()
     # foundation for 4x4 image
-    n_nodes = 256 * 4 * 4
+    n_nodes = 1024 * 8 * 8
     model.add(Dense(n_nodes, input_dim=latent_dim))
     model.add(LeakyReLU(alpha=0.2))
-    model.add(Reshape((4, 4, 256)))
-    # upsample to 8x8
-    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
-    model.add(LeakyReLU(alpha=0.2))
-    model.add(BatchNormalization())
+    model.add(Reshape((8, 8, 1024)))
     # upsample to 16x16
-    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
+    model.add(Conv2DTranspose(512, (4, 4), strides=(2, 2), padding='same', activation='relu'))
     model.add(LeakyReLU(alpha=0.2))
     model.add(BatchNormalization())
     # upsample to 32x32
-    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
+    model.add(Conv2DTranspose(256, (4, 4), strides=(2, 2), padding='same', activation='relu'))
     model.add(LeakyReLU(alpha=0.2))
     model.add(BatchNormalization())
     # upsample to 64x64
     model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
     model.add(LeakyReLU(alpha=0.2))
     model.add(BatchNormalization())
-
-    # model.add(Conv2DTranspose(3, (3, 3), activation='tanh', padding='same'))
-    # model.add(LeakyReLU(alpha=0.2))
-    # model.add(BatchNormalization())
-
     # upsample to 128x128
-    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
+    model.add(Conv2DTranspose(64, (4, 4), strides=(2, 2), padding='same', activation='relu'))
     model.add(LeakyReLU(alpha=0.2))
     model.add(BatchNormalization())
-    # upsample to 256x256
-    # model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
-    # model.add(LeakyReLU(alpha=0.2))
-
-    # model.add(Conv2DTranspose(3, (3, 3), activation='tanh', padding='same'))
-    # model.add(LeakyReLU(alpha=0.2))
 
     # output layer
     model.add(Conv2D(3, (3, 3), activation='tanh', padding='same'))
@@ -144,7 +131,7 @@ def define_gan(g_model, d_model):
     # add the discriminator
     model.add(d_model)
     # compile model
-    opt = Adam(lr=0.0002, beta_1=0.5)
+    opt = Adam(lr=0.0001, beta_1=0.5)
     model.compile(loss='binary_crossentropy', optimizer=opt)
     return model
 
@@ -283,29 +270,10 @@ def summarize_performance(epoch, g_model, d_model, dataset, latent_dim, n_sample
     print("Saved to " + filename)
 
 
-# def get_y_gan(num_of_samples):
-#     ret = []
-#     for i in range(num_of_samples):
-#         ret.append(np.array([1,0]))
-#
-#     # ret = []
-#     # for i in range(num_of_samples):
-#     #     ret.append(0)
-#
-#     return np.array(ret)
-
-
 # train the generator and discriminator
 def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=10, n_batch=32):
     bat_per_epo = int(dataset.shape[0] / n_batch)
     half_batch = int(n_batch / 2)
-
-    # X_gan = generate_latent_points(latent_dim, n_batch)
-    # # create inverted labels for the fake samples
-    # y_gan = get_y_gan(n_batch)
-    # # g_loss = gan_model.train_on_batch(X_gan, y_gan)
-    # gan_model.fit(X_gan, y_gan, epochs=n_epochs, batch_size=n_batch)
-    # summarize_performance(1, g_model, d_model, dataset, latent_dim)
 
     # manually enumerate epochs
     for i in range(n_epochs):
@@ -335,18 +303,13 @@ def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=10, n_batch
 
 
 if __name__ == "__main__":
-    # config = tf.ConfigProto(device_count={'GPU': 1, 'CPU': 56})
-    # sess = tf.Session(config=config)
-    # tensorflow.keras.backend.set_session(sess)
-    print("GPUs:" + str(tf.config.experimental.list_physical_devices('GPU')))
-
     number_of_images = 256
 
     w = 128
     h = 128
 
     # size of the latent space
-    latent_dim = 72000
+    latent_dim = 3000
     # create the discriminator
     d_model = define_discriminator(in_shape=(w,h,3))
     # create the generator
@@ -357,5 +320,5 @@ if __name__ == "__main__":
     # load image data
     dataset = load_real_samples(input_width=w, input_height=h)
     # train model
-    train(g_model, d_model, gan_model, dataset, latent_dim, n_batch=8, n_epochs=1000)
+    train(g_model, d_model, gan_model, dataset, latent_dim, n_batch=4, n_epochs=1000)
     print("Done")

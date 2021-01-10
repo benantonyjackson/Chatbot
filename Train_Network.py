@@ -29,7 +29,6 @@ train_batches = ImageDataGenerator().flow_from_directory(train_path, classes=cla
 valid_batches = ImageDataGenerator().flow_from_directory(valid_path, classes=classes,
                                                          target_size=(input_width, input_height))
 
-
 model = keras.Sequential([
     layers.Conv2D(32, (3, 3), activation="relu", input_shape=(input_width, input_height, 3)),
     layers.Conv2D(32, kernel_size=(3, 3), activation="relu"),
