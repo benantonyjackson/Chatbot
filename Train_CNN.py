@@ -22,7 +22,7 @@ valid_path = 'dataset/validate'
 input_width = 256
 input_height = 256
 
-classes = ['bears', 'wolves']
+classes = ['bears', 'wolves', 'dogs', 'swords']
 
 train_batches = ImageDataGenerator().flow_from_directory(train_path, classes=classes,
                                                          target_size=(input_width, input_height))
@@ -43,6 +43,6 @@ model = keras.Sequential([
 
 model.compile(Adam(lr=.0001), loss="categorical_crossentropy", metrics=["accuracy"])
 
-model.fit(train_batches, validation_data=valid_batches, epochs=15, verbose=2)
+model.fit(train_batches, validation_data=valid_batches, epochs=15, verbose=1)
 
 model.save("model.h5")

@@ -20,7 +20,7 @@ from matplotlib import pyplot
 from tensorflow.keras.layers import BatchNormalization
 from tensorflow.keras.initializers import RandomNormal
 
-from TrainedModel import TrainedModel
+from Trained_CNN_Wrapper import TrainedModel
 from tensorflow.keras.models import load_model
 
 import numpy as np
@@ -80,7 +80,7 @@ def define_discriminator(in_shape=(256,256,3)):
     # model.add(BatchNormalization())
     model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same'))
     model.add(LeakyReLU(alpha=0.2))
-    # model.add(BatchNormalization())
+    model.add(BatchNormalization())
     model.add(Flatten())
     model.add(Dense(1, activation='sigmoid'))
     # compile model
@@ -197,7 +197,7 @@ def load_real_samples(input_width = 128, input_height = 128):
             try:
                 image = (cv2.imread(train_path + "/" + classes[i] + "/" + image_name, 1))
                 resized_image = cv2.resize(image, (input_width, input_height), interpolation=cv2.INTER_AREA)
-                # img_with_noise = sp_noise(resized_image, 0.05)
+                # img_with_noise = sp_noise(resized_image, 0.01)
                 scaled_image = (resized_image - 127.5) / 127.5
                 images.append(scaled_image)
                 #
@@ -222,7 +222,7 @@ def generate_real_samples(dataset, n_samples):
     # generate 'real' class labels (1)
     # y = ones((n_samples, 1))
 
-    y = np.full((n_samples, 1), 1)
+    y = np.full((n_samples, 1), 0.9)
 
     return X, y
 

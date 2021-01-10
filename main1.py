@@ -1,21 +1,19 @@
 import aiml
-from Witcher_Wiki_Parser import WitcherWikiParser
 from sklearn.feature_extraction import text
 from sklearn.metrics.pairwise import cosine_similarity
+
+from Witcher_Wiki_Parser import WitcherWikiParser
+
 from bs4 import BeautifulSoup
 import string
 from autocorrect import Speller
 
-from TrainedModel import TrainedModel
+from qapairs import QApairs
+from Trained_CNN_Wrapper import TrainedModel
+
 import easygui
 
-import wx
 
-
-import tkinter as tk
-from tkinter import filedialog
-
-from qapairs import QApairs
 
 ALL_CATEGORIES = []
 CATEGORIES_WITHOUT_WILDCARDS = []
