@@ -18,6 +18,7 @@ from tensorflow.keras.layers import LeakyReLU
 from tensorflow.keras.layers import Dropout
 from matplotlib import pyplot
 from tensorflow.keras.layers import BatchNormalization
+from tensorflow.keras import layers
 from tensorflow.keras.initializers import RandomNormal
 
 from Trained_CNN_Wrapper import TrainedModel
@@ -69,19 +70,23 @@ def define_discriminator(in_shape=(256,256,3)):
     model = Sequential()
     model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same', input_shape=in_shape))
     model.add(LeakyReLU(alpha=0.2))
-    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same'))
+    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same', use_bias=False))
     model.add(LeakyReLU(alpha=0.2))
     # model.add(BatchNormalization())
-    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same'))
+    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same', use_bias=False))
     model.add(LeakyReLU(alpha=0.2))
     # model.add(BatchNormalization())
-    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same'))
+    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same', use_bias=False))
     model.add(LeakyReLU(alpha=0.2))
     # model.add(BatchNormalization())
-    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same'))
+    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same', use_bias=False))
     # model.add(LeakyReLU(alpha=0.2))
     # model.add(BatchNormalization())
     model.add(Flatten())
+    model.add(layers.Dropout(0.9))
+    model.add(layers.Dropout(0.9))
+    # model.add(layers.Dropout(0.5))
+    # model.add(layers.Dropout(0.9))
     model.add(Dense(1, activation='sigmoid'))
     # compile model
     # opt = Adam(lr=0.0002, beta_1=0.5)
@@ -99,31 +104,31 @@ def define_generator(latent_dim, n_images, input_height=32, input_width=32):
     model.add(LeakyReLU(alpha=0.2))
     model.add(Reshape((4, 4, 256)))
     # upsample to 8x8
-    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
+    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu', use_bias=False))
     model.add(LeakyReLU(alpha=0.2))
     model.add(BatchNormalization())
     # upsample to 16x16
-    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
+    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu', use_bias=False))
     model.add(LeakyReLU(alpha=0.2))
     model.add(BatchNormalization())
     # upsample to 32x32
-    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
+    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu', use_bias=False))
     model.add(LeakyReLU(alpha=0.2))
     model.add(BatchNormalization())
     # upsample to 64x64
-    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
+    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu', use_bias=False))
     model.add(LeakyReLU(alpha=0.2))
     model.add(BatchNormalization())
 
-    model.add(Conv2DTranspose(64, (3, 3), padding='same', activation='relu'))
-    model.add(LeakyReLU(alpha=0.2))
-    model.add(BatchNormalization())
-    model.add(Conv2DTranspose(32, (3, 3), padding='same', activation='relu'))
-    model.add(LeakyReLU(alpha=0.2))
-    model.add(BatchNormalization())
-    model.add(Conv2DTranspose(16, (3, 3), padding='same', activation='relu'))
-    model.add(LeakyReLU(alpha=0.2))
-    model.add(BatchNormalization())
+    # model.add(Conv2DTranspose(64, (3, 3), padding='same', activation='relu'))
+    # model.add(LeakyReLU(alpha=0.2))
+    # model.add(BatchNormalization())
+    # model.add(Conv2DTranspose(32, (3, 3), padding='same', activation='relu'))
+    # model.add(LeakyReLU(alpha=0.2))
+    # model.add(BatchNormalization())
+    # model.add(Conv2DTranspose(16, (3, 3), padding='same', activation='relu'))
+    # model.add(LeakyReLU(alpha=0.2))
+    # model.add(BatchNormalization())
     # model.add(Conv2DTranspose(32, (3, 3),  padding='same', activation='relu'))
     # model.add(BatchNormalization())
     # model.add(Conv2DTranspose(16, (3, 3), padding='same', activation='relu'))
@@ -249,7 +254,7 @@ def load_noisy_samples(input_width = 128, input_height = 128):
             try:
                 image = (cv2.imread(train_path + "/" + classes[i] + "/" + image_name, 1))
                 resized_image = cv2.resize(image, (input_width, input_height), interpolation=cv2.INTER_AREA)
-                img_with_noise = sp_noise(resized_image, 0.01)
+                img_with_noise = sp_noise(resized_image, 0.5)
                 scaled_image = (img_with_noise - 127.5) / 127.5
                 images.append(scaled_image)
             except Exception as e:
@@ -269,7 +274,7 @@ def generate_real_samples(dataset, n_samples):
     # generate 'real' class labels (1)
     # y = ones((n_samples, 1))
 
-    y = np.full((n_samples, 1), 0.8)
+    y = np.full((n_samples, 1), 1)
 
     return X, y
 
@@ -283,7 +288,7 @@ def generate_noisy_samples(dataset, n_samples):
     # generate 'real' class labels (1)
     # y = ones((n_samples, 1))
 
-    y = np.full((n_samples, 1), 0.5)
+    y = np.full((n_samples, 1), 0.8)
 
     return X, y
 

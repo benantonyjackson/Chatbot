@@ -129,11 +129,6 @@ def get_enemy_weaknesses(inp, parser):
 
 
 def classify_image(filepath=""):
-    # responses = {
-    #     'bears': 'This image appears to contain a bear. Bears are enemies that can be found in the witcher 3'
-    #     'wolves'
-    # }
-
     if filepath == "":
         filepath = easygui.fileopenbox()
 

@@ -21,19 +21,11 @@ https://deeplizard.com/resources
 
 
 class TrainedModel:
-    def __init__(self, path="model.h5", classes=['bears', 'wolves', 'dogs', 'horses'], test_path='dataset/test'):
+    def __init__(self, path="model.h5", classes=['bears', 'wolves', 'dogs', 'horses'], test_path='samples'):
         self.path = path
         self.model = load_model(path)
         self.classes = classes
         self.test_path = test_path
-
-    # This function is only for my own testing
-    def test_against_testing_set(self):
-        for cls in self.classes:
-            dirs = listdir(self.test_path + "/" + cls)
-            for directory in dirs:
-                predicted_class = self.predict_local_image(self.test_path + "/" + cls + "/" + directory)
-                print(predicted_class + ": " + self.test_path + "/" + cls + "/" + directory)
 
     def predict_local_image(self, path):
         img = image.load_img(path, target_size=(256, 256))
@@ -43,8 +35,3 @@ class TrainedModel:
         predictions = self.model.predict(x)
         # https://numpy.org/doc/stable/reference/generated/numpy.argmax.html
         return self.classes[np.argmax(predictions[0])]
-
-
-if __name__ == "__main__":
-    tm = TrainedModel()
-    tm.test_against_testing_set()
