@@ -17,7 +17,7 @@ https://machinelearningmastery.com/how-to-develop-a-generative-adversarial-netwo
 
 
 class TrainedGan:
-    def __init__(self, model_dir='generator_model_060.h5'):
+    def __init__(self, model_dir='generator_model_090.h5'):
         self.model = load_model(model_dir)
 
     def load_model(self, model_dir):

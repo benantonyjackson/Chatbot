@@ -98,11 +98,6 @@ def spell_check_sentence(inp):
     return ret[:-1]
 
 
-def get_file_path():
-    # https://stackoverflow.com/questions/9319317/quick-and-easy-file-dialog-in-python
-    return easygui.fileopenbox()
-
-
 def get_enemy_description(inp, parser):
     try:
         words = inp.split(' ')
@@ -140,7 +135,7 @@ def classify_image(filepath=""):
     # }
 
     if filepath == "":
-        filepath = get_file_path()
+        filepath = easygui.fileopenbox()
 
     prediction = tm.predict_local_image(path=filepath)
 

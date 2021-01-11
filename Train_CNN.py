@@ -34,11 +34,14 @@ if __name__ == "__main__":
                                                              target_size=(input_width, input_height))
 
     model = keras.Sequential([
-        layers.Conv2D(32, (3, 3), activation="relu", input_shape=(input_width, input_height, 3)),
+        layers.Conv2D(128, (3, 3), activation="relu", input_shape=(input_width, input_height, 3)),
+        layers.Conv2D(64, kernel_size=(3, 3), activation="relu"),
+        BatchNormalization(),
+        layers.MaxPooling2D(pool_size=(2, 2)),
         layers.Conv2D(32, kernel_size=(3, 3), activation="relu"),
         BatchNormalization(),
         layers.MaxPooling2D(pool_size=(2, 2)),
-        layers.Conv2D(64, kernel_size=(3, 3), activation="relu"),
+        layers.Conv2D(16, kernel_size=(3, 3), activation="relu"),
         BatchNormalization(),
         layers.MaxPooling2D(pool_size=(2, 2)),
         layers.Flatten(),
