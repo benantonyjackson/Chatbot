@@ -65,7 +65,7 @@ https://github.com/jordan-bird/art-DCGAN-Keras
 
 # define the standalone discriminator model
 def define_discriminator(in_shape=(256,256,3)):
-    hidden_nodes = 256
+    hidden_nodes = 128
     model = Sequential()
     model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same', input_shape=in_shape))
     model.add(LeakyReLU(alpha=0.2))
@@ -79,8 +79,8 @@ def define_discriminator(in_shape=(256,256,3)):
     model.add(LeakyReLU(alpha=0.2))
     # model.add(BatchNormalization())
     model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same'))
-    model.add(LeakyReLU(alpha=0.2))
-    model.add(BatchNormalization())
+    # model.add(LeakyReLU(alpha=0.2))
+    # model.add(BatchNormalization())
     model.add(Flatten())
     model.add(Dense(1, activation='sigmoid'))
     # compile model
@@ -115,14 +115,28 @@ def define_generator(latent_dim, n_images, input_height=32, input_width=32):
     model.add(LeakyReLU(alpha=0.2))
     model.add(BatchNormalization())
 
+    model.add(Conv2DTranspose(64, (3, 3), padding='same', activation='relu'))
+    model.add(LeakyReLU(alpha=0.2))
+    model.add(BatchNormalization())
+    model.add(Conv2DTranspose(32, (3, 3), padding='same', activation='relu'))
+    model.add(LeakyReLU(alpha=0.2))
+    model.add(BatchNormalization())
+    model.add(Conv2DTranspose(16, (3, 3), padding='same', activation='relu'))
+    model.add(LeakyReLU(alpha=0.2))
+    model.add(BatchNormalization())
+    # model.add(Conv2DTranspose(32, (3, 3),  padding='same', activation='relu'))
+    # model.add(BatchNormalization())
+    # model.add(Conv2DTranspose(16, (3, 3), padding='same', activation='relu'))
+    # model.add(BatchNormalization())
+
     # model.add(Conv2DTranspose(3, (3, 3), activation='tanh', padding='same'))
     # model.add(LeakyReLU(alpha=0.2))
     # model.add(BatchNormalization())
 
     # upsample to 128x128
-    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
-    model.add(LeakyReLU(alpha=0.2))
-    model.add(BatchNormalization())
+    # model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
+    # model.add(LeakyReLU(alpha=0.2))
+    # model.add(BatchNormalization())
     # upsample to 256x256
     # model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
     # model.add(LeakyReLU(alpha=0.2))
@@ -185,10 +199,8 @@ def load_real_samples(input_width = 128, input_height = 128):
 
     classes = ['bear_gan']
 
-    # classes = ['bears', 'wolves', 'dogs', 'swords', 'African Elephant', 'Amur Leopard', 'Arctic Fox', 'Black Rhino',
-    #            'Black Spider Monkey', 'Bluefin Tuna', 'Chimpanzee', 'European Rabbit', 'Orangutan']
     images = []
-
+    print("Begun loading images")
     for i in range(0, len(classes)):
         dirs = listdir(train_path + "/" + classes[i])
         for image_name in dirs:
@@ -213,6 +225,41 @@ def load_real_samples(input_width = 128, input_height = 128):
     return retImage
 
 
+# load and prepare cifar10 training images
+def load_noisy_samples(input_width = 128, input_height = 128):
+    # # load cifar10 dataset
+    # (trainX, _), (_, _) = load_data()
+    # # convert from unsigned ints to floats
+    # X = trainX.astype('float32')
+    # # scale from [0,255] to [-1,1]
+    # X = (X - 127.5) / 127.5
+    # return X
+
+    train_path = 'dataset/train'
+
+    classes = ['bear_gan']
+
+    images = []
+    print("Begun loading images")
+    for i in range(0, len(classes)):
+        dirs = listdir(train_path + "/" + classes[i])
+        for image_name in dirs:
+            # https://www.pluralsight.com/guides/importing-image-data-into-numpy-arrays
+            # https://www.tutorialkart.com/opencv/python/opencv-python-resize-image/
+            try:
+                image = (cv2.imread(train_path + "/" + classes[i] + "/" + image_name, 1))
+                resized_image = cv2.resize(image, (input_width, input_height), interpolation=cv2.INTER_AREA)
+                img_with_noise = sp_noise(resized_image, 0.01)
+                scaled_image = (img_with_noise - 127.5) / 127.5
+                images.append(scaled_image)
+            except Exception as e:
+                pass
+
+    print("Images loaded")
+    retImage = np.array(images)
+    return retImage
+
+
 # select real samples
 def generate_real_samples(dataset, n_samples):
     # choose random instances
@@ -222,7 +269,21 @@ def generate_real_samples(dataset, n_samples):
     # generate 'real' class labels (1)
     # y = ones((n_samples, 1))
 
-    y = np.full((n_samples, 1), 0.9)
+    y = np.full((n_samples, 1), 0.8)
+
+    return X, y
+
+
+# select real samples
+def generate_noisy_samples(dataset, n_samples):
+    # choose random instances
+    ix = randint(0, dataset.shape[0], n_samples)
+    # retrieve selected images
+    X = dataset[ix]
+    # generate 'real' class labels (1)
+    # y = ones((n_samples, 1))
+
+    y = np.full((n_samples, 1), 0.5)
 
     return X, y
 
@@ -286,7 +347,7 @@ def summarize_performance(epoch, g_model, d_model, dataset, latent_dim, n_sample
 
 
 # train the generator and discriminator
-def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=10, n_batch=32):
+def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=10, n_batch=32, noisy_data=None):
     bat_per_epo = int(dataset.shape[0] / n_batch)
     half_batch = int(n_batch / 2)
 
@@ -298,6 +359,10 @@ def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=10, n_batch
             X_real, y_real = generate_real_samples(dataset, half_batch)
             # update discriminator model weights
             d_loss1, _ = d_model.train_on_batch(X_real, y_real)
+            # get randomly selected 'noise' samples
+            X_noise, y_noise = generate_noisy_samples(noisy_data, half_batch)
+            # update discriminator model weights
+            d_loss1, _ = d_model.train_on_batch(X_noise, y_noise)
             # generate 'fake' examples
             X_fake, y_fake = generate_fake_samples(g_model, latent_dim, half_batch)
             # update discriminator model weights
@@ -320,11 +385,11 @@ def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=10, n_batch
 if __name__ == "__main__":
     number_of_images = 256
 
-    w = 128
-    h = 128
+    w = 64
+    h = 64
 
     # size of the latent space
-    latent_dim = 72000
+    latent_dim = 10000
     # create the discriminator
     d_model = define_discriminator(in_shape=(w,h,3))
     # create the generator
@@ -334,6 +399,7 @@ if __name__ == "__main__":
     gan_model = define_gan(g_model, d_model)
     # load image data
     dataset = load_real_samples(input_width=w, input_height=h)
+    noiseSet = load_noisy_samples(w, h)
     # train model
-    train(g_model, d_model, gan_model, dataset, latent_dim, n_batch=4, n_epochs=1000)
+    train(g_model, d_model, gan_model, dataset, latent_dim, n_batch=4, n_epochs=1000, noisy_data=noiseSet)
     print("Done")

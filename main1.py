@@ -134,11 +134,18 @@ def get_enemy_weaknesses(inp, parser):
 
 
 def classify_image(filepath=""):
-    print("Started")
+    # responses = {
+    #     'bears': 'This image appears to contain a bear. Bears are enemies that can be found in the witcher 3'
+    #     'wolves'
+    # }
+
     if filepath == "":
         filepath = get_file_path()
 
-    print(tm.predict_local_image(path=filepath))
+    prediction = tm.predict_local_image(path=filepath)
+
+    print("This image appears to contain " + prediction)
+    print(parser.get_summary(prediction))
 
 
 def process_input(userInput):

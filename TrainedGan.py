@@ -17,7 +17,7 @@ https://machinelearningmastery.com/how-to-develop-a-generative-adversarial-netwo
 
 
 class TrainedGan:
-    def __init__(self, model_dir='good-bear-gan-128/generator_model_890.h5'):
+    def __init__(self, model_dir='generator_model_060.h5'):
         self.model = load_model(model_dir)
 
     def load_model(self, model_dir):
@@ -25,7 +25,7 @@ class TrainedGan:
         return load_model(model_dir)
 
     def generate_image(self):
-        vector = asarray([[(random.randint(-1000, 1000) / 1000) for _ in range(1000)]])
+        vector = asarray([[(random.randint(-1000, 1000) / 1000) for _ in range(10000)]])
         # generate image
         return self.model.predict(vector)
 

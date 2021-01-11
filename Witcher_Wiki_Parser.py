@@ -53,6 +53,9 @@ class WitcherWikiParser:
         allEnemies.append('godling')
         allEnemies.append('dettlaff van der eretein')
 
+        self.ENEMY_MAP['horse'] = self.BASE_URL + "Horse"
+        self.ENEMY_MAP['horses'] = self.BASE_URL + "Horse"
+
         self.ALL_ENEMIES = allEnemies
 
     def get_enemy_weaknesses(self, enemy):

@@ -1,5 +1,6 @@
 import numpy as np
 # Disables tenosorflow console output
+# https://stackoverflow.com/questions/35911252/disable-tensorflow-debugging-information
 import os
 from os import listdir
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -20,7 +21,7 @@ https://deeplizard.com/resources
 
 
 class TrainedModel:
-    def __init__(self, path="model.h5", classes=['bears', 'wolves', 'dogs', 'swords'], test_path='dataset/test'):
+    def __init__(self, path="model.h5", classes=['bears', 'wolves', 'dogs', 'horses'], test_path='dataset/test'):
         self.path = path
         self.model = load_model(path)
         self.classes = classes
