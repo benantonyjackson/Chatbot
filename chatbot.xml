@@ -124,6 +124,13 @@
         <template>#4$<star index="1"></star></template>
     </category>
 
+    <!-- generate image -->
+
+    <category>
+        <pattern>GENERATE A PICTURE FOR ME</pattern>
+        <template>#5$<star index="1"></star></template>
+    </category>
+
     <!-- default reaction -->
 
    <category>

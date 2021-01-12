@@ -10,6 +10,7 @@ from autocorrect import Speller
 
 from qapairs import QApairs
 from Trained_CNN_Wrapper import TrainedModel
+from Trained_GAN_Wrapper import TrainedGan
 
 import easygui
 
@@ -138,6 +139,10 @@ def classify_image(filepath=""):
     print(parser.get_summary(prediction))
 
 
+def generate_image():
+    TrainedGan().generate_and_display_image()
+
+
 def process_input(userInput):
     responseAgent = "aiml"
 
@@ -167,6 +172,8 @@ def process_input(userInput):
                 find_most_similar_question(params[1])
             if cmd == "#4":
                 classify_image()
+            if cmd == "#5":
+                generate_image()
         else:
             print(answer)
 

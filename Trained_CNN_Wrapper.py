@@ -2,7 +2,6 @@ import numpy as np
 # Disables tenosorflow console output
 # https://stackoverflow.com/questions/35911252/disable-tensorflow-debugging-information
 import os
-from os import listdir
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 from tensorflow.keras.preprocessing import image

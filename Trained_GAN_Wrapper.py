@@ -1,10 +1,15 @@
-from tensorflow.keras.models import load_model
 from numpy import asarray
 from matplotlib import pyplot
 from numpy.random import randn
 from numpy.random import randint
 
 import random
+
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+from tensorflow.keras.models import load_model
+
 
 """
 Title: Keras - Python Deep Learning Neural Network API
@@ -17,20 +22,17 @@ https://machinelearningmastery.com/how-to-develop-a-generative-adversarial-netwo
 
 
 class TrainedGan:
-    def __init__(self, model_dir='generator_model_170.h5'):
+    def __init__(self, model_dir='bear-gan-model.h5'):
         self.model = load_model(model_dir)
 
-    def load_model(self, model_dir):
-        # load model
-        return load_model(model_dir)
-
-    def generate_image(self):
-        vector = asarray([[(random.randint(-1000, 1000) / 1000) for _ in range(10000)]])
+    def generate_image(self, latent_space):
+        # Generates an array of random noise
+        vector = asarray([[(random.randint(-1000, 1000) / 1000) for _ in range(latent_space)]])
         # generate image
         return self.model.predict(vector)
 
-    def generate_and_display_image(self):
-        X = self.generate_image()
+    def generate_and_display_image(self, latent_space=60000):
+        X = self.generate_image(latent_space=latent_space)
         # scale from [-1,1] to [0,1]
         X = (X + 1) / 2.0
         # plot the result

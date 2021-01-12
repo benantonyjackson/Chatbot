@@ -9,6 +9,8 @@ from numpy.random import randint
 from tensorflow.keras.datasets.cifar10 import load_data
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.models import Sequential
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import Reshape
 from tensorflow.keras.layers import Flatten
@@ -72,21 +74,17 @@ def define_discriminator(in_shape=(256,256,3)):
     model.add(LeakyReLU(alpha=0.2))
     model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same', use_bias=False))
     model.add(LeakyReLU(alpha=0.2))
-    # model.add(BatchNormalization())
+    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same'))
+    model.add(LeakyReLU(alpha=0.2))
+
+    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same'))
+    model.add(LeakyReLU(alpha=0.2))
+
     model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same', use_bias=False))
     model.add(LeakyReLU(alpha=0.2))
-    # model.add(BatchNormalization())
-    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same', use_bias=False))
-    model.add(LeakyReLU(alpha=0.2))
-    # model.add(BatchNormalization())
-    model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same', use_bias=False))
-    # model.add(LeakyReLU(alpha=0.2))
-    # model.add(BatchNormalization())
+
     model.add(Flatten())
-    model.add(layers.Dropout(0.9))
-    model.add(layers.Dropout(0.9))
-    # model.add(layers.Dropout(0.5))
-    # model.add(layers.Dropout(0.9))
+    model.add(layers.Dropout(0.5))
     model.add(Dense(1, activation='sigmoid'))
     # compile model
     # opt = Adam(lr=0.0002, beta_1=0.5)
@@ -106,48 +104,19 @@ def define_generator(latent_dim, n_images, input_height=32, input_width=32):
     # upsample to 8x8
     model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu', use_bias=False))
     model.add(LeakyReLU(alpha=0.2))
-    model.add(BatchNormalization())
+
     # upsample to 16x16
-    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu', use_bias=False))
+    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
     model.add(LeakyReLU(alpha=0.2))
-    model.add(BatchNormalization())
+
     # upsample to 32x32
-    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu', use_bias=False))
+    model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
     model.add(LeakyReLU(alpha=0.2))
-    model.add(BatchNormalization())
+
     # upsample to 64x64
     model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu', use_bias=False))
     model.add(LeakyReLU(alpha=0.2))
-    model.add(BatchNormalization())
 
-    # model.add(Conv2DTranspose(64, (3, 3), padding='same', activation='relu'))
-    # model.add(LeakyReLU(alpha=0.2))
-    # model.add(BatchNormalization())
-    # model.add(Conv2DTranspose(32, (3, 3), padding='same', activation='relu'))
-    # model.add(LeakyReLU(alpha=0.2))
-    # model.add(BatchNormalization())
-    # model.add(Conv2DTranspose(16, (3, 3), padding='same', activation='relu'))
-    # model.add(LeakyReLU(alpha=0.2))
-    # model.add(BatchNormalization())
-    # model.add(Conv2DTranspose(32, (3, 3),  padding='same', activation='relu'))
-    # model.add(BatchNormalization())
-    # model.add(Conv2DTranspose(16, (3, 3), padding='same', activation='relu'))
-    # model.add(BatchNormalization())
-
-    # model.add(Conv2DTranspose(3, (3, 3), activation='tanh', padding='same'))
-    # model.add(LeakyReLU(alpha=0.2))
-    # model.add(BatchNormalization())
-
-    # upsample to 128x128
-    # model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
-    # model.add(LeakyReLU(alpha=0.2))
-    # model.add(BatchNormalization())
-    # upsample to 256x256
-    # model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
-    # model.add(LeakyReLU(alpha=0.2))
-
-    # model.add(Conv2DTranspose(3, (3, 3), activation='tanh', padding='same'))
-    # model.add(LeakyReLU(alpha=0.2))
 
     # output layer
     model.add(Conv2D(3, (3, 3), activation='tanh', padding='same'))
@@ -191,21 +160,11 @@ def sp_noise(image, prob):
 
 
 # load and prepare cifar10 training images
-def load_real_samples(input_width = 128, input_height = 128):
-    # # load cifar10 dataset
-    # (trainX, _), (_, _) = load_data()
-    # # convert from unsigned ints to floats
-    # X = trainX.astype('float32')
-    # # scale from [0,255] to [-1,1]
-    # X = (X - 127.5) / 127.5
-    # return X
-
+def load_real_samples(input_width=128, input_height=128):
     train_path = 'dataset/train'
-
     classes = ['bear_gan']
-
     images = []
-    print("Begun loading images")
+
     for i in range(0, len(classes)):
         dirs = listdir(train_path + "/" + classes[i])
         for image_name in dirs:
@@ -214,32 +173,17 @@ def load_real_samples(input_width = 128, input_height = 128):
             try:
                 image = (cv2.imread(train_path + "/" + classes[i] + "/" + image_name, 1))
                 resized_image = cv2.resize(image, (input_width, input_height), interpolation=cv2.INTER_AREA)
-                # img_with_noise = sp_noise(resized_image, 0.01)
                 scaled_image = (resized_image - 127.5) / 127.5
                 images.append(scaled_image)
-                #
-                # X = (scaled_image + 1) / 2.0
-                # # plot the result
-                # pyplot.imshow(X)
-                # pyplot.show()
             except Exception as e:
                 pass
 
-    print("Images loaded")
     retImage = np.array(images)
     return retImage
 
 
 # load and prepare cifar10 training images
 def load_noisy_samples(input_width = 128, input_height = 128):
-    # # load cifar10 dataset
-    # (trainX, _), (_, _) = load_data()
-    # # convert from unsigned ints to floats
-    # X = trainX.astype('float32')
-    # # scale from [0,255] to [-1,1]
-    # X = (X - 127.5) / 127.5
-    # return X
-
     train_path = 'dataset/train'
 
     classes = ['bear_gan']
@@ -254,7 +198,7 @@ def load_noisy_samples(input_width = 128, input_height = 128):
             try:
                 image = (cv2.imread(train_path + "/" + classes[i] + "/" + image_name, 1))
                 resized_image = cv2.resize(image, (input_width, input_height), interpolation=cv2.INTER_AREA)
-                img_with_noise = sp_noise(resized_image, 0.5)
+                img_with_noise = sp_noise(resized_image, 0.05)
                 scaled_image = (img_with_noise - 127.5) / 127.5
                 images.append(scaled_image)
             except Exception as e:
@@ -288,7 +232,7 @@ def generate_noisy_samples(dataset, n_samples):
     # generate 'real' class labels (1)
     # y = ones((n_samples, 1))
 
-    y = np.full((n_samples, 1), 0.8)
+    y = np.full((n_samples, 1), 0.7)
 
     return X, y
 
@@ -364,12 +308,11 @@ def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=10, n_batch
             X_real, y_real = generate_real_samples(dataset, half_batch)
             # update discriminator model weights
             d_loss1, _ = d_model.train_on_batch(X_real, y_real)
+            X_fake, y_fake = generate_fake_samples(g_model, latent_dim, half_batch)
             # get randomly selected 'noise' samples
             X_noise, y_noise = generate_noisy_samples(noisy_data, half_batch)
             # update discriminator model weights
             d_loss1, _ = d_model.train_on_batch(X_noise, y_noise)
-            # generate 'fake' examples
-            X_fake, y_fake = generate_fake_samples(g_model, latent_dim, half_batch)
             # update discriminator model weights
             d_loss2, _ = d_model.train_on_batch(X_fake, y_fake)
             # prepare points in latent space as input for the generator
@@ -379,7 +322,6 @@ def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=10, n_batch
             # update the generator via the discriminator's error
             g_loss = gan_model.train_on_batch(X_gan, y_gan)
             # summarize loss on this batch
-            # if (i + 1) % 100 == 0:
             print('>%d, %d/%d, d1=%.3f, d2=%.3f g=%.3f' %
                   (i + 1, j + 1, bat_per_epo, d_loss1, d_loss2, g_loss))
         # evaluate the model performance, sometimes
@@ -394,11 +336,11 @@ if __name__ == "__main__":
     h = 64
 
     # size of the latent space
-    latent_dim = 10000
+    latent_dim = 20
     # create the discriminator
     d_model = define_discriminator(in_shape=(w,h,3))
     # create the generator
-    g_model = define_generator(latent_dim, n_images=number_of_images, input_height=h, input_width=w)
+    g_model = define_generator(latent_dim, n_images=number_of_images)
     # g_model = load_model('generator_model_020.h5')
     # create the gan
     gan_model = define_gan(g_model, d_model)
