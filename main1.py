@@ -34,7 +34,7 @@ def get_all_patterns():
 
     for category in categories:
         ALL_CATEGORIES.append(category.text)
-        if '*' not in category:
+        if '*' not in category.text:
             CATEGORIES_WITHOUT_WILDCARDS.append(category.text)
 
 
