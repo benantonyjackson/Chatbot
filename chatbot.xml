@@ -127,7 +127,7 @@
     <!-- generate image -->
 
     <category>
-        <pattern>GENERATE A PICTURE FOR ME</pattern>
+        <pattern>GENERATE DRAW A PICTURE IMAGE PHOTO</pattern>
         <template>#5$<star index="1"></star></template>
     </category>
 

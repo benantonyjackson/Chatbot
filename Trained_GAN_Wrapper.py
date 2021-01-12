@@ -23,7 +23,7 @@ https://machinelearningmastery.com/how-to-develop-a-generative-adversarial-netwo
 
 class TrainedGan:
     def __init__(self, model_dir='bear-gan-model.h5'):
-        self.model = load_model(model_dir)
+        self.model = load_model(model_dir, compile=False)
 
     def generate_image(self, latent_space):
         # Generates an array of random noise

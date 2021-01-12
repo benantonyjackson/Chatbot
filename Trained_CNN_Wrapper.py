@@ -8,14 +8,11 @@ from tensorflow.keras.preprocessing import image
 from tensorflow.keras.models import load_model
 
 """ 
-Title: Keras - Python Deep Learning Neural Network API
-Author: Mandy
+Title: tf.keras.preprocessing.image.load_img 
+Author: Tensor flow documentation
 Date: 21.12.2020
-Code version: v1.0.3
 Availability: 
-https://www.youtube.com/playlist?list=PLZbbT5o_s2xrL4F90oKfloWM7ExXT_U_b
-https://deeplizard.com/learn/playlist/PLZbbT5o_s2xrwRnXk_yCPtnqqo4_u2YGL
-https://deeplizard.com/resources
+https://www.tensorflow.org/api_docs/python/tf/keras/preprocessing/image/load_img
 """
 
 
@@ -29,8 +26,7 @@ class TrainedModel:
     def predict_local_image(self, path):
         img = image.load_img(path, target_size=(256, 256))
         x = image.img_to_array(img)
-        x = np.expand_dims(x, axis=0)
+        x = np.array([x])
 
         predictions = self.model.predict(x)
-        # https://numpy.org/doc/stable/reference/generated/numpy.argmax.html
         return self.classes[np.argmax(predictions[0])]

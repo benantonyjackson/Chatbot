@@ -20,6 +20,7 @@ ALL_CATEGORIES = []
 CATEGORIES_WITHOUT_WILDCARDS = []
 
 tm = TrainedModel()
+gan = TrainedGan()
 
 qapairs = QApairs()
 
@@ -140,7 +141,7 @@ def classify_image(filepath=""):
 
 
 def generate_image():
-    TrainedGan().generate_and_display_image()
+    gan.generate_and_display_image()
 
 
 def process_input(userInput):
@@ -173,6 +174,7 @@ def process_input(userInput):
             if cmd == "#4":
                 classify_image()
             if cmd == "#5":
+                print("Sure! I'll generate you an image of a bear now!")
                 generate_image()
         else:
             print(answer)

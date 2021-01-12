@@ -12,6 +12,8 @@ Author: Mandy
 Date: 21.12.2020
 Code version: v1.0.3
 Availability: 
+https://www.youtube.com/watch?v=LhEMXbjGV_4&list=PLZbbT5o_s2xrL4F90oKfloWM7ExXT_U_b&index=10&ab_channel=deeplizard
+https://www.youtube.com/watch?v=daovGOlMbT4&list=PLZbbT5o_s2xrL4F90oKfloWM7ExXT_U_b&index=11&ab_channel=deeplizard
 https://www.youtube.com/playlist?list=PLZbbT5o_s2xrL4F90oKfloWM7ExXT_U_b
 https://deeplizard.com/learn/playlist/PLZbbT5o_s2xrwRnXk_yCPtnqqo4_u2YGL
 https://deeplizard.com/resources

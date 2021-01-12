@@ -60,12 +60,6 @@ https://github.com/jordan-bird/art-DCGAN-Keras
 """
 
 
-# gan structure https://cpang4.github.io/gan/
-
-# Best practice initialiser for GANS
-# initialWeights = RandomNormal(mean=0.0, stddev=0.02, seed=None)
-
-
 # define the standalone discriminator model
 def define_discriminator(in_shape=(256,256,3)):
     hidden_nodes = 128
@@ -86,8 +80,6 @@ def define_discriminator(in_shape=(256,256,3)):
     model.add(Flatten())
     model.add(layers.Dropout(0.5))
     model.add(Dense(1, activation='sigmoid'))
-    # compile model
-    # opt = Adam(lr=0.0002, beta_1=0.5)
     opt = Adam(lr=0.00005, beta_1=0.5)
     model.compile(loss='binary_crossentropy', optimizer=opt, metrics=['accuracy'])
     return model
@@ -116,7 +108,6 @@ def define_generator(latent_dim, n_images, input_height=32, input_width=32):
     # upsample to 64x64
     model.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu', use_bias=False))
     model.add(LeakyReLU(alpha=0.2))
-
 
     # output layer
     model.add(Conv2D(3, (3, 3), activation='tanh', padding='same'))
@@ -232,7 +223,7 @@ def generate_noisy_samples(dataset, n_samples):
     # generate 'real' class labels (1)
     # y = ones((n_samples, 1))
 
-    y = np.full((n_samples, 1), 0.7)
+    y = np.full((n_samples, 1), 0.5)
 
     return X, y
 
@@ -336,7 +327,7 @@ if __name__ == "__main__":
     h = 64
 
     # size of the latent space
-    latent_dim = 20
+    latent_dim = 10000
     # create the discriminator
     d_model = define_discriminator(in_shape=(w,h,3))
     # create the generator
