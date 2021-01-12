@@ -1,7 +1,5 @@
 from numpy import asarray
 from matplotlib import pyplot
-from numpy.random import randn
-from numpy.random import randint
 
 import random
 
@@ -39,8 +37,3 @@ class TrainedGan:
         pyplot.imshow(X[0, :, :])
         pyplot.show()
 
-
-if __name__ == "__main__":
-    tg = TrainedGan()
-    for i in range(0, 15):
-        tg.generate_and_display_image()

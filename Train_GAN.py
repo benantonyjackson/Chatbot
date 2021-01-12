@@ -1,51 +1,39 @@
 import random
 
-from numpy import expand_dims
 from numpy import zeros
 from numpy import ones
-from numpy import vstack
+
 from numpy.random import randn
 from numpy.random import randint
-from tensorflow.keras.datasets.cifar10 import load_data
+
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import Reshape
 from tensorflow.keras.layers import Flatten
 from tensorflow.keras.layers import Conv2D
 from tensorflow.keras.layers import Conv2DTranspose
 from tensorflow.keras.layers import LeakyReLU
-from tensorflow.keras.layers import Dropout
-from matplotlib import pyplot
-from tensorflow.keras.layers import BatchNormalization
-from tensorflow.keras import layers
-from tensorflow.keras.initializers import RandomNormal
 
-from Trained_CNN_Wrapper import TrainedModel
-from tensorflow.keras.models import load_model
+from matplotlib import pyplot
+
+from tensorflow.keras import layers
+
+
 
 import numpy as np
 
 import cv2
-from PIL import Image
-from numpy import asarray
+
 from os import listdir
 
-from tensorflow.keras import backend as K
-import tensorflow.keras
-import tensorflow as tf
 
-
-from tensorflow.python.client import device_lib
 
 
 """
 Title: Keras - Python Deep Learning Neural Network API
 Author: Jason Brownlee
 Date: 27.12.2020
-Code version: 
 Availability:
 https://machinelearningmastery.com/how-to-develop-a-generative-adversarial-network-for-a-cifar-10-small-object-photographs-from-scratch/
 """
@@ -54,7 +42,6 @@ https://machinelearningmastery.com/how-to-develop-a-generative-adversarial-netwo
 Title: Keras - Python Deep Learning Neural Network API
 Author: Jordan Bird
 Date: 07.01.2021
-Code version: No version number available 
 Availability: 
 https://github.com/jordan-bird/art-DCGAN-Keras
 """
@@ -64,10 +51,13 @@ https://github.com/jordan-bird/art-DCGAN-Keras
 def define_discriminator(in_shape=(256,256,3)):
     hidden_nodes = 128
     model = Sequential()
+
     model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same', input_shape=in_shape))
     model.add(LeakyReLU(alpha=0.2))
+
     model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same', use_bias=False))
     model.add(LeakyReLU(alpha=0.2))
+
     model.add(Conv2D(hidden_nodes, (3,3), strides=(2, 2), padding='same'))
     model.add(LeakyReLU(alpha=0.2))
 
@@ -79,7 +69,9 @@ def define_discriminator(in_shape=(256,256,3)):
 
     model.add(Flatten())
     model.add(layers.Dropout(0.5))
+
     model.add(Dense(1, activation='sigmoid'))
+
     opt = Adam(lr=0.00005, beta_1=0.5)
     model.compile(loss='binary_crossentropy', optimizer=opt, metrics=['accuracy'])
     return model
@@ -130,12 +122,15 @@ def define_gan(g_model, d_model):
     return model
 
 
-# https://stackoverflow.com/questions/22937589/how-to-add-noise-gaussian-salt-and-pepper-etc-to-image-in-python-with-opencv
+"""
+Title: Keras - Python Deep Learning Neural Network API
+Author: Jason Brownlee
+Date: 27.12.2020
+Code version: 
+Availability:
+https://stackoverflow.com/questions/22937589/how-to-add-noise-gaussian-salt-and-pepper-etc-to-image-in-python-with-opencv
+"""
 def sp_noise(image, prob):
-    '''
-    Add salt and pepper noise to image
-    prob: Probability of the noise
-    '''
     output = np.zeros(image.shape,np.uint8)
     thres = 1 - prob
     for i in range(image.shape[0]):
@@ -155,6 +150,7 @@ def load_real_samples(input_width=128, input_height=128):
     train_path = 'dataset/train'
     classes = ['bear_gan']
     images = []
+    print("Begun loading images")
 
     for i in range(0, len(classes)):
         dirs = listdir(train_path + "/" + classes[i])
@@ -169,6 +165,7 @@ def load_real_samples(input_width=128, input_height=128):
             except Exception as e:
                 pass
 
+    print("Images loaded")
     retImage = np.array(images)
     return retImage
 
@@ -201,7 +198,7 @@ def load_noisy_samples(input_width = 128, input_height = 128):
 
 
 # select real samples
-def generate_real_samples(dataset, n_samples):
+def generate_real_samples(dataset, n_samples, label):
     # choose random instances
     ix = randint(0, dataset.shape[0], n_samples)
     # retrieve selected images
@@ -210,20 +207,6 @@ def generate_real_samples(dataset, n_samples):
     # y = ones((n_samples, 1))
 
     y = np.full((n_samples, 1), 1)
-
-    return X, y
-
-
-# select real samples
-def generate_noisy_samples(dataset, n_samples):
-    # choose random instances
-    ix = randint(0, dataset.shape[0], n_samples)
-    # retrieve selected images
-    X = dataset[ix]
-    # generate 'real' class labels (1)
-    # y = ones((n_samples, 1))
-
-    y = np.full((n_samples, 1), 0.5)
 
     return X, y
 
@@ -296,22 +279,26 @@ def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=10, n_batch
         # enumerate batches over the training set
         for j in range(bat_per_epo):
             # get randomly selected 'real' samples
-            X_real, y_real = generate_real_samples(dataset, half_batch)
+            X_real, y_real = generate_real_samples(dataset, half_batch, 1)
             # update discriminator model weights
             d_loss1, _ = d_model.train_on_batch(X_real, y_real)
-            X_fake, y_fake = generate_fake_samples(g_model, latent_dim, half_batch)
+
             # get randomly selected 'noise' samples
-            X_noise, y_noise = generate_noisy_samples(noisy_data, half_batch)
+            X_noise, y_noise = generate_real_samples(noisy_data, half_batch, 0.5)
             # update discriminator model weights
             d_loss1, _ = d_model.train_on_batch(X_noise, y_noise)
+
+            X_fake, y_fake = generate_fake_samples(g_model, latent_dim, half_batch)
             # update discriminator model weights
             d_loss2, _ = d_model.train_on_batch(X_fake, y_fake)
+
             # prepare points in latent space as input for the generator
             X_gan = generate_latent_points(latent_dim, n_batch)
             # create inverted labels for the fake samples
             y_gan = ones((n_batch, 1))
             # update the generator via the discriminator's error
             g_loss = gan_model.train_on_batch(X_gan, y_gan)
+
             # summarize loss on this batch
             print('>%d, %d/%d, d1=%.3f, d2=%.3f g=%.3f' %
                   (i + 1, j + 1, bat_per_epo, d_loss1, d_loss2, g_loss))
