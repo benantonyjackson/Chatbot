@@ -203,10 +203,8 @@ def generate_real_samples(dataset, n_samples, label):
     ix = randint(0, dataset.shape[0], n_samples)
     # retrieve selected images
     X = dataset[ix]
-    # generate 'real' class labels (1)
-    # y = ones((n_samples, 1))
 
-    y = np.full((n_samples, 1), 1)
+    y = np.full((n_samples, 1), label)
 
     return X, y
 

@@ -1,0 +1,44 @@
+Image classification:
+	data arranged into train and validation
+	
+	Model is built and compiled
+	Trained on the data
+	Model is saved to disk
+	
+	class loads the model
+	
+	loads image from path 
+	formats the image data to fit model input layer
+	uses the model to predict the class it belongs to
+	returns the name of the class with the highest score
+
+	When the user asks the chatbot to classify an image
+	a file dialoge box opens to let the user to pick the image
+	the class name is then used to retrieve the description of that 
+	creature from the withcer 3 wiki
+
+Gan 
+
+	Descriminator is built
+	Genorator is built
+
+	Models combined to create gan
+	Descriminator weights set not trainable 
+
+	real samples loaded
+	Real samples with noise loaded
+
+	Loops until reaches specified number of epochs
+	retrieves random batch of real samples
+	and noisy samples	
+
+	trains descriminator on real and noisy samples
+	sets noisy samples label to 0.5
+
+	Discriminator trained on fake samples.
+	Generator generates fake samples used for training.
+
+	Generator is trained to better fool the descriminator.
+
+	Performance is summerised every 10 epochs
+	Generated images written to disk so performance can be reviewed
