@@ -19,8 +19,6 @@ from matplotlib import pyplot
 
 from tensorflow.keras import layers
 
-
-
 import numpy as np
 
 import cv2
@@ -48,7 +46,7 @@ https://github.com/jordan-bird/art-DCGAN-Keras
 
 
 # define the standalone discriminator model
-def define_discriminator(in_shape=(256,256,3)):
+def define_discriminator(in_shape):
     hidden_nodes = 128
     model = Sequential()
 
@@ -78,7 +76,7 @@ def define_discriminator(in_shape=(256,256,3)):
 
 
 # define the standalone generator model
-def define_generator(latent_dim, n_images, input_height=32, input_width=32):
+def define_generator(latent_dim):
     model = Sequential()
     # foundation for 4x4 image
     n_nodes = 256 * 4 * 4

@@ -25,6 +25,7 @@ class TrainedModel:
 
     def predict_local_image(self, path):
         img = image.load_img(path, target_size=(256, 256))
+
         x = image.img_to_array(img)
         x = np.array([x])
 

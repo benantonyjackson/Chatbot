@@ -131,6 +131,18 @@
         <template>#5$<star index="1"></star></template>
     </category>
 
+    <!-- Logic input -->
+
+    <category>
+        <pattern> I KNOW THAT * IS *</pattern>
+        <template>#6$<star index="1"/> is <star index="2"/></template>
+    </category>
+
+    <category>
+        <pattern> CHECK THAT * IS *</pattern>
+        <template>#7$<star index="1"/> is <star index="2"/></template>
+    </category>
+
     <!-- default reaction -->
 
    <category>

@@ -14,7 +14,15 @@ from Trained_GAN_Wrapper import TrainedGan
 
 import easygui
 
+from nltk.sem import Expression
+from nltk.inference import ResolutionProver
+read_expr = Expression.fromstring
 
+import pandas
+
+kb=[]
+data = pandas.read_csv('kb.csv', header=None)
+[kb.append(read_expr(row)) for row in data[0]]
 
 ALL_CATEGORIES = []
 CATEGORIES_WITHOUT_WILDCARDS = []
@@ -176,6 +184,25 @@ def process_input(userInput):
             if cmd == "#5":
                 print("Sure! I'll generate you an image of a bear now!")
                 generate_image()
+            # Here are the processing of the new logical component:
+            if cmd == "#6":  # if input pattern is "I know that * is *"
+                object, subject = params[1].split(' is ')
+                expr = read_expr(subject + '(' + object + ')')
+                # >>> ADD SOME CODES HERE to make sure expr does not contradict
+                # with the KB before appending, otherwise show an error message.
+                kb.append(expr)
+                print('OK, I will remember that', object, 'is', subject)
+            if cmd == "#7":  # if the input pattern is "check that * is *"
+                object, subject = params[1].split(' is ')
+                expr = read_expr(subject + '(' + object + ')')
+                answer = ResolutionProver().prove(expr, kb, verbose=True)
+                if answer:
+                    print('Correct.')
+                else:
+                    print('It may not be true.')
+                    # >> This is not an ideal answer.
+                    # >> ADD SOME CODES HERE to find if expr is false, then give a
+                    # definite response: either "Incorrect" or "Sorry I don't know."
         else:
             print(answer)
 
