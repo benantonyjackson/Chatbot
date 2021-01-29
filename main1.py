@@ -27,9 +27,6 @@ data = pandas.read_csv('kb.csv', header=None)
 ALL_CATEGORIES = []
 CATEGORIES_WITHOUT_WILDCARDS = []
 
-tm = TrainedModel()
-gan = TrainedGan()
-
 qapairs = QApairs()
 
 
@@ -142,14 +139,14 @@ def classify_image(filepath=""):
     if filepath == "":
         filepath = easygui.fileopenbox()
 
-    prediction = tm.predict_local_image(path=filepath)
+    prediction = TrainedModel().predict_local_image(path=filepath)
 
     print("This image appears to contain " + prediction)
     print(parser.get_summary(prediction))
 
 
 def generate_image():
-    gan.generate_and_display_image()
+    TrainedGan().generate_and_display_image()
 
 
 def process_input(userInput):
