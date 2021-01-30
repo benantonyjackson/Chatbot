@@ -20,14 +20,17 @@ read_expr = Expression.fromstring
 
 import pandas
 
-kb=[]
-data = pandas.read_csv('kb.csv', header=None)
-[kb.append(read_expr(row)) for row in data[0]]
+kb = []
 
 ALL_CATEGORIES = []
 CATEGORIES_WITHOUT_WILDCARDS = []
 
 qapairs = QApairs()
+
+
+def load_knowledge_base(filename='kb.csv'):
+    data = pandas.read_csv('kb.csv', header=None)
+    [kb.append(read_expr(row)) for row in data[0]]
 
 
 def get_all_patterns():
@@ -215,6 +218,8 @@ if __name__ == "__main__":
     kernel.bootstrap(learnFiles="chatbot.xml")
 
     parser = WitcherWikiParser()
+
+    load_knowledge_base()
 
     while True:
         process_input(input('> '))
