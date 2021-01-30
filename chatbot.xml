@@ -131,12 +131,14 @@
         <template>#5$<star index="1"></star></template>
     </category>
 
-    <!-- Logic input -->
+    <!-- Expanding knowledge base -->
 
     <category>
         <pattern> I KNOW THAT * IS *</pattern>
         <template>#6$<star index="1"/> is <star index="2"/></template>
     </category>
+
+    <!-- Checking against knowledge base -->
 
     <category>
         <pattern> CHECK THAT * IS *</pattern>

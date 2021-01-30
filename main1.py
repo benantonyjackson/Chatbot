@@ -187,19 +187,34 @@ def process_input(userInput):
             # Here are the processing of the new logical component:
             if cmd == "#6":  # if input pattern is "I know that * is *"
                 object, subject = params[1].split(' is ')
-                expr = read_expr(subject + '(' + object + ')')
+
+                expression_string = subject + '(' + object + ')'
+
+                expr = read_expr(expression_string)
                 # >>> ADD SOME CODES HERE to make sure expr does not contradict
                 # with the KB before appending, otherwise show an error message.
-                kb.append(expr)
-                print('OK, I will remember that', object, 'is', subject)
+
+                inv_expression = read_expr("-" + expression_string)
+                answer = ResolutionProver().prove(inv_expression, kb, verbose=True)
+                if answer:
+                    print("This is contradictory")
+                else:
+                    kb.append(expr)
+                    print('OK, I will remember that', object, 'is', subject)
+
             if cmd == "#7":  # if the input pattern is "check that * is *"
                 object, subject = params[1].split(' is ')
-                expr = read_expr(subject + '(' + object + ')')
+                expression_string = subject + '(' + object + ')'
+                inv_expression = read_expr("-" + expression_string)
+                expr = read_expr(expression_string)
                 answer = ResolutionProver().prove(expr, kb, verbose=True)
                 if answer:
                     print('Correct.')
                 else:
-                    print('It may not be true.')
+                    if ResolutionProver().prove(inv_expression, kb, verbose=True):
+                        print("This is incorrect")
+                    else:
+                        print("I don't know")
                     # >> This is not an ideal answer.
                     # >> ADD SOME CODES HERE to find if expr is false, then give a
                     # definite response: either "Incorrect" or "Sorry I don't know."
