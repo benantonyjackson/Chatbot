@@ -157,16 +157,13 @@ def evaluate_expression(expression_string):
     expr = read_expr(expression_string)
     answer = ResolutionProver().prove(expr, kb, verbose=True)
     if answer:
-        return 'Correct.'
+        return 'Correct'
     else:
         # Checks if the inverse of the expression is true to determine if their expression is false
         if ResolutionProver().prove(inv_expression, kb, verbose=True):
             return "Incorrect"
         else:
             return "I don't know"
-        # >> This is not an ideal answer.
-        # >> ADD SOME CODES HERE to find if expr is false, then give a
-        # definite response: either "Incorrect" or "Sorry I don't know."
 
 
 def answer_user_question(subject, object):
@@ -177,16 +174,10 @@ def answer_user_question(subject, object):
 def expand_knowledge_base(subject, object):
     expression_string = subject + '(' + object + ')'
 
-    expr = read_expr(expression_string)
-    # >>> ADD SOME CODES HERE to make sure expr does not contradict
-    # with the KB before appending, otherwise show an error message.
-
-    inv_expression = read_expr("-" + expression_string)
-    answer = ResolutionProver().prove(inv_expression, kb, verbose=True)
-    if answer:
+    if evaluate_expression(expression_string) == "Incorrect":
         print("This is contradictory")
     else:
-        kb.append(expr)
+        kb.append(read_expr(expression_string))
         print('OK, I will remember that', object, 'is', subject)
 
 
