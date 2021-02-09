@@ -30,7 +30,11 @@ qapairs = QApairs()
 
 def load_knowledge_base(filename='kb.csv'):
     data = pandas.read_csv('kb.csv', header=None)
-    [kb.append(read_expr(row)) for row in data[0]]
+    for row in data[0]:
+        if evaluate_expression(row) != "Incorrect":
+            kb.append(read_expr(row))
+        else:
+            print("An error occurred while loading the knowledge base.")
 
 
 def get_all_patterns():
@@ -153,13 +157,13 @@ def generate_image():
 
 
 def evaluate_expression(expression_string):
-    inv_expression = read_expr("-" + expression_string)
     expr = read_expr(expression_string)
     answer = ResolutionProver().prove(expr, kb, verbose=True)
     if answer:
         return 'Correct'
     else:
         # Checks if the inverse of the expression is true to determine if their expression is false
+        inv_expression = read_expr("-" + expression_string)
         if ResolutionProver().prove(inv_expression, kb, verbose=True):
             return "Incorrect"
         else:
@@ -181,18 +185,18 @@ def expand_knowledge_base(subject, object):
         print('OK, I will remember that', object, 'is', subject)
 
 
-def process_input(userInput):
+def process_input(user_input):
     responseAgent = "aiml"
 
     # Strips punctuation from input
-    userInput = userInput.translate(str.maketrans('', '', string.punctuation))
+    user_input = user_input.translate(str.maketrans('', '', string.punctuation))
 
-    userInput = userInput.lower()
+    user_input = user_input.lower()
 
-    userInput = spell_check_sentence(userInput)
+    user_input = spell_check_sentence(user_input)
 
     if responseAgent == "aiml":
-        answer = kernel.respond(userInput)
+        answer = kernel.respond(user_input)
 
         if '#' in answer[0]:
             params = answer.split('$')

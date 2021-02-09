@@ -1,7 +1,9 @@
 witcher (geralt)
 mutant (witcher)
-mutant (x) -> witcher (x)
 horse (roach)
+-monster (witcher)
+-horse (monster)
+
 
 british (x) -> european (x)
 british (tim)
