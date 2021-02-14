@@ -70,7 +70,6 @@ class WitcherWikiParser:
         if enemy.lower() == "godling":
             return ['You do not need to fight Godlings at any point.']
         if enemy.lower() == "dettlaff van der eretein":
-
             return ["Sorry, I'm not quite sure how best to fight Dettlaff."]
 
         r = requests.get(self.ENEMY_MAP[enemy.lower()])

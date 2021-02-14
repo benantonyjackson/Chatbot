@@ -16,9 +16,9 @@ import easygui
 
 from nltk.sem import Expression
 from nltk.inference import ResolutionProver
-read_expr = Expression.fromstring
-
 import pandas
+
+read_expr = Expression.fromstring
 
 kb = []
 
@@ -29,7 +29,7 @@ qapairs = QApairs()
 
 
 def load_knowledge_base(filename='kb.csv'):
-    data = pandas.read_csv('kb.csv', header=None)
+    data = pandas.read_csv(filename, header=None)
     for row in data[0]:
         if evaluate_expression(row) != "Incorrect":
             kb.append(read_expr(row))
@@ -193,7 +193,7 @@ def process_input(user_input):
 
     user_input = user_input.lower()
 
-    user_input = spell_check_sentence(user_input)
+    # user_input = spell_check_sentence(user_input)
 
     if responseAgent == "aiml":
         answer = kernel.respond(user_input)
