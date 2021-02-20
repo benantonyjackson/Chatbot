@@ -158,8 +158,8 @@ def generate_image():
 
 def evaluate_expression(expression_string):
     expr = read_expr(expression_string)
-    answer = ResolutionProver().prove(expr, kb, verbose=True)
-    if answer:
+    print(ResolutionProver().prove(expr, kb, verbose=True))
+    if ResolutionProver().prove(expr, kb, verbose=True):
         return 'Correct'
     else:
         # Checks if the inverse of the expression is true to determine if their expression is false
