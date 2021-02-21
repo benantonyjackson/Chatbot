@@ -28,14 +28,26 @@ CATEGORIES_WITHOUT_WILDCARDS = []
 qapairs = QApairs()
 
 
-def load_knowledge_base(filename='kb.csv'):
+def load_knowledge_base(filename='kb.csv', verify_integrity=False):
     data = pandas.read_csv(filename, header=None)
     for row in data[0]:
         if evaluate_expression(row) != "Incorrect":
             kb.append(read_expr(row))
         else:
             print("An error occurred while loading the knowledge base.")
-    print(parser.get_knowledge_base())
+
+    wiki_kb = parser.get_knowledge_base()
+
+    print(wiki_kb)
+
+    for line in wiki_kb:
+        if not verify_integrity:
+            kb.append(read_expr(line))
+        else:
+            if evaluate_expression(line) != "Incorrect":
+                kb.append(read_expr(line))
+            else:
+                print("An error occurred while loading the knowledge base.")
 
 
 def get_all_patterns():

@@ -31,7 +31,10 @@ class WitcherWikiParser:
         types = soup.findAll("span", {"class": "mw-headline"})
         for type in types:
             if type.text != "References":
-                self.TYPES.append(type.text.lower())
+                if type.text[-1] == 's':
+                    self.TYPES.append(type.text.lower()[:-1])
+                else:
+                    self.TYPES.append(type.text.lower())
 
         allBeastCategories = soup.findAll("div", {"class": "divTable"})
 
@@ -45,7 +48,6 @@ class WitcherWikiParser:
 
             # print(self.TYPES[i] + "----- \n\n")
             self.ENEMY_CATEGORIES[self.TYPES[i]] = []
-
 
             for enemy in enemies:
                 allEnemies.append(enemy.text.lower())
@@ -69,8 +71,6 @@ class WitcherWikiParser:
 
         self.ENEMY_MAP['horse'] = self.BASE_URL + "Horse"
         self.ENEMY_MAP['horses'] = self.BASE_URL + "Horse"
-
-        print(self.ENEMY_CATEGORIES)
 
         self.ALL_ENEMIES = allEnemies
 
@@ -133,10 +133,9 @@ class WitcherWikiParser:
 
     def get_knowledge_base(self):
         kb = []
-        print(self.TYPES)
+
         for enemy_type in self.TYPES:
-            print(enemy_type)
             for enemy in self.ENEMY_CATEGORIES[enemy_type]:
-                kb.append("{type}({enemy})".format(type=enemy_type, enemy=enemy).replace(" ", "_"))
+                kb.append("{type}({enemy})".format(type=enemy_type, enemy=enemy).replace(" ", "").replace("-", ""))
 
         return kb
