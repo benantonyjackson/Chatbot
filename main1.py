@@ -43,6 +43,7 @@ def load_knowledge_base(filename='kb.csv', verify_integrity=False):
     for line in wiki_kb:
         if not verify_integrity:
             kb.append(read_expr(line))
+            print(line)
         else:
             if evaluate_expression(line) != "Incorrect":
                 kb.append(read_expr(line))
