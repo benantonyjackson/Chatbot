@@ -30,7 +30,8 @@ class WitcherWikiParser:
         # Uses the headlines to construct list of enemy types
         types = soup.findAll("span", {"class": "mw-headline"})
         for type in types:
-            self.TYPES.append(type.text)
+            if type.text != "References":
+                self.TYPES.append(type.text.lower())
 
         allBeastCategories = soup.findAll("div", {"class": "divTable"})
 
@@ -129,3 +130,13 @@ class WitcherWikiParser:
             return wikia.summary("witcher", "werebear")
 
         return wikia.summary("witcher", self.ENEMY_MAP[enemy].split("/")[-1])
+
+    def get_knowledge_base(self):
+        kb = []
+        print(self.TYPES)
+        for enemy_type in self.TYPES:
+            print(enemy_type)
+            for enemy in self.ENEMY_CATEGORIES[enemy_type]:
+                kb.append("{type}({enemy})".format(type=enemy_type, enemy=enemy).replace(" ", "_"))
+
+        return kb

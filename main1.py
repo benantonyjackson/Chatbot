@@ -35,6 +35,7 @@ def load_knowledge_base(filename='kb.csv'):
             kb.append(read_expr(row))
         else:
             print("An error occurred while loading the knowledge base.")
+    print(parser.get_knowledge_base())
 
 
 def get_all_patterns():
