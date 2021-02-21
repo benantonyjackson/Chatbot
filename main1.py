@@ -156,15 +156,15 @@ def generate_image():
     TrainedGan().generate_and_display_image()
 
 
-def evaluate_expression(expression_string):
+def evaluate_expression(expression_string, verbose=False):
     expr = read_expr(expression_string)
-    print(ResolutionProver().prove(expr, kb, verbose=True))
-    if ResolutionProver().prove(expr, kb, verbose=True):
+
+    if ResolutionProver().prove(expr, kb, verbose=verbose):
         return 'Correct'
     else:
         # Checks if the inverse of the expression is true to determine if their expression is false
         inv_expression = read_expr("-" + expression_string)
-        if ResolutionProver().prove(inv_expression, kb, verbose=True):
+        if ResolutionProver().prove(inv_expression, kb, verbose=verbose):
             return "Incorrect"
         else:
             return "I don't know"

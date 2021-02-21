@@ -10,6 +10,8 @@ class WitcherWikiParser:
     # Stores all of the different types of enemies
     TYPES = []
 
+    ENEMY_CATEGORIES = {}
+
     # Stores all enemies
     ALL_ENEMIES = []
     # Dictionary that maps each enemies name to the url to its wiki page
@@ -31,17 +33,28 @@ class WitcherWikiParser:
             self.TYPES.append(type.text)
 
         allBeastCategories = soup.findAll("div", {"class": "divTable"})
-        
+
+        i = 0
+
         # loops through ea
         for enemyCategory in allBeastCategories:
             enemyCatagorySoup = BeautifulSoup(str(enemyCategory), "lxml")
 
             enemies = enemyCatagorySoup.findAll("a")
 
+            # print(self.TYPES[i] + "----- \n\n")
+            self.ENEMY_CATEGORIES[self.TYPES[i]] = []
+
+
             for enemy in enemies:
                 allEnemies.append(enemy.text.lower())
                 self.ENEMY_MAP[enemy.text.lower()] = self.BASE_URL + enemy['href']
                 self.ENEMY_MAP[enemy['title'].lower().replace(" (creature)", "")] = self.BASE_URL + enemy['href']
+                # print(enemy.text.lower())
+                self.ENEMY_CATEGORIES[self.TYPES[i]].append(enemy.text.lower())
+                self.ENEMY_CATEGORIES[self.TYPES[i]].append(enemy['title'].lower().replace(" (creature)", ""))
+            i += 1
+
 
         allEnemies.append('wargs')
         allEnemies.append('warg')
@@ -55,6 +68,8 @@ class WitcherWikiParser:
 
         self.ENEMY_MAP['horse'] = self.BASE_URL + "Horse"
         self.ENEMY_MAP['horses'] = self.BASE_URL + "Horse"
+
+        print(self.ENEMY_CATEGORIES)
 
         self.ALL_ENEMIES = allEnemies
 
