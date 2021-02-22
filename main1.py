@@ -16,6 +16,7 @@ import easygui
 
 from nltk.sem import Expression
 from nltk.inference import ResolutionProver
+
 import pandas
 
 read_expr = Expression.fromstring
@@ -32,29 +33,13 @@ def check_integrity(dummy_subject, dummy_object):
     return evaluate_expression(dummy_object + '(' + dummy_subject + ')') == "I don't know"
 
 
-def load_knowledge_base(filename='kb.csv', verify_integrity=False):
+def load_knowledge_base(filename='kb.csv'):
     data = pandas.read_csv(filename, header=None)
     for row in data[0]:
-        # if evaluate_expression(row) != "Incorrect":
         kb.append(read_expr(row))
 
     if not check_integrity('xxx', 'yyy'):
-        print("An error occurred while loading the knowledge base.")
-
-    # wiki_kb = parser.get_knowledge_base()
-
-    # print(wiki_kb)
-
-
-
-    # for line in wiki_kb:
-    #     if not verify_integrity:
-    #         kb.append(read_expr(line))
-    #     else:
-    #         if evaluate_expression(line) != "Incorrect":
-    #             kb.append(read_expr(line))
-    #         else:
-    #             print("An error occurred while loading the knowledge base.")
+        print("An error occurred while loading the knowledge base. The knowledge base contains contradictions")
 
 
 def get_all_patterns():
@@ -242,7 +227,6 @@ def process_input(user_input):
             if cmd == "#6":  # if input pattern is "I know that * is *"
                 object, subject = params[1].split(' is ')
                 expand_knowledge_base(subject, object)
-
             if cmd == "#7":  # if the input pattern is "check that * is *"
                 object, subject = params[1].split(' is ')
                 answer_user_question(subject, object)
