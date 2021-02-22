@@ -28,27 +28,33 @@ CATEGORIES_WITHOUT_WILDCARDS = []
 qapairs = QApairs()
 
 
+def check_integrity(dummy_subject, dummy_object):
+    return evaluate_expression(dummy_object + '(' + dummy_subject + ')') == "I don't know"
+
+
 def load_knowledge_base(filename='kb.csv', verify_integrity=False):
     data = pandas.read_csv(filename, header=None)
     for row in data[0]:
-        if evaluate_expression(row) != "Incorrect":
-            kb.append(read_expr(row))
-        else:
-            print("An error occurred while loading the knowledge base.")
+        # if evaluate_expression(row) != "Incorrect":
+        kb.append(read_expr(row))
 
-    wiki_kb = parser.get_knowledge_base()
+    if not check_integrity('xxx', 'yyy'):
+        print("An error occurred while loading the knowledge base.")
 
-    print(wiki_kb)
+    # wiki_kb = parser.get_knowledge_base()
 
-    for line in wiki_kb:
-        if not verify_integrity:
-            kb.append(read_expr(line))
-            print(line)
-        else:
-            if evaluate_expression(line) != "Incorrect":
-                kb.append(read_expr(line))
-            else:
-                print("An error occurred while loading the knowledge base.")
+    # print(wiki_kb)
+
+
+
+    # for line in wiki_kb:
+    #     if not verify_integrity:
+    #         kb.append(read_expr(line))
+    #     else:
+    #         if evaluate_expression(line) != "Incorrect":
+    #             kb.append(read_expr(line))
+    #         else:
+    #             print("An error occurred while loading the knowledge base.")
 
 
 def get_all_patterns():
@@ -170,7 +176,7 @@ def generate_image():
     TrainedGan().generate_and_display_image()
 
 
-def evaluate_expression(expression_string, verbose=False):
+def evaluate_expression(expression_string, verbose=True):
     expr = read_expr(expression_string)
 
     if ResolutionProver().prove(expr, kb, verbose=verbose):
@@ -178,6 +184,7 @@ def evaluate_expression(expression_string, verbose=False):
     else:
         # Checks if the inverse of the expression is true to determine if their expression is false
         inv_expression = read_expr("-" + expression_string)
+
         if ResolutionProver().prove(inv_expression, kb, verbose=verbose):
             return "Incorrect"
         else:
