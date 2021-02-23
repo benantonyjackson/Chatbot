@@ -242,18 +242,25 @@ def expand_knowledge_base(subject, object):
         # Removes contradictory sentence
         kb.pop()
 
-    # if evaluate_expression(expression_string) == "Incorrect":
-    #     print("This is contradictory")
-    # else:
-    #     kb.append(read_expr(expression_string))
-    #     print('OK, I will remember that', object, 'is', subject)
-
 
 def guess_the_item():
     print('Enter the weight of the item:')
-    weight_value = input('> ')
+    while True:
+        try:
+            weight_value = float(input('> '))
+        except ValueError:
+            print('Please enter a number')
+            continue
+        break
+
     print('Enter the gold value of the item:')
-    gold_value = input('> ')
+    while True:
+        try:
+            gold_value = float(input('> '))
+        except ValueError:
+            print('Please enter a number')
+            continue
+        break
 
     print(fuzzy_logic(gold_value, weight_value))
 
@@ -296,7 +303,7 @@ def process_input(user_input):
             if cmd == "#7":  # if the input pattern is "check that * is *"
                 object, subject = params[1].split(' is ')
                 answer_user_question(subject, object)
-            if cmd == '#8': # Fuzzy logic
+            if cmd == '#8':  # Fuzzy logic
                 guess_the_item()
         else:
             print(answer)
