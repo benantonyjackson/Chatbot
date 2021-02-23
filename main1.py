@@ -216,6 +216,7 @@ def generate_image():
 
 
 def evaluate_expression(expression_string, verbose=False):
+    expression_string = expression_string.replace(" ", "")
     expr = read_expr(expression_string)
 
     if ResolutionProver().prove(expr, kb, verbose=verbose):
