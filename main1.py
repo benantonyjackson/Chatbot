@@ -40,6 +40,7 @@ def load_knowledge_base(filename='kb.csv'):
 
     if not check_integrity('xxx', 'yyy'):
         print("An error occurred while loading the knowledge base. The knowledge base contains contradictions")
+        quit()
 
 
 def get_all_patterns():
@@ -161,7 +162,7 @@ def generate_image():
     TrainedGan().generate_and_display_image()
 
 
-def evaluate_expression(expression_string, verbose=True):
+def evaluate_expression(expression_string, verbose=False):
     expr = read_expr(expression_string)
 
     if ResolutionProver().prove(expr, kb, verbose=verbose):
@@ -182,13 +183,21 @@ def answer_user_question(subject, object):
 
 
 def expand_knowledge_base(subject, object):
-    expression_string = subject + '(' + object + ')'
+    expression_string = subject + ' (' + object + ')'
 
-    if evaluate_expression(expression_string) == "Incorrect":
-        print("This is contradictory")
-    else:
-        kb.append(read_expr(expression_string))
+    kb.append(read_expr(expression_string))
+
+    if check_integrity('xxx', 'yyy'):
         print('OK, I will remember that', object, 'is', subject)
+    else:
+        print("This is contradictory")
+        kb.pop()
+
+    # if evaluate_expression(expression_string) == "Incorrect":
+    #     print("This is contradictory")
+    # else:
+    #     kb.append(read_expr(expression_string))
+    #     print('OK, I will remember that', object, 'is', subject)
 
 
 def process_input(user_input):
@@ -223,7 +232,6 @@ def process_input(user_input):
             if cmd == "#5":
                 print("Sure! I'll generate you an image of a bear now!")
                 generate_image()
-            # Here are the processing of the new logical component:
             if cmd == "#6":  # if input pattern is "I know that * is *"
                 object, subject = params[1].split(' is ')
                 expand_knowledge_base(subject, object)
