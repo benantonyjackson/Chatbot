@@ -73,7 +73,8 @@ def fuzzy_logic(gold_value, weight_value):
     strengths = FS.get_firing_strengths()
 
     outputs = ['Weapon', 'Junk', 'Food', 'Potion or Bomb']
-    print(outputs[strengths.index(max(strengths))])
+
+    return outputs[strengths.index(max(strengths))]
 
 
 def check_integrity(dummy_subject, dummy_object):
@@ -248,6 +249,15 @@ def expand_knowledge_base(subject, object):
     #     print('OK, I will remember that', object, 'is', subject)
 
 
+def guess_the_item():
+    print('Enter the weight of the item:')
+    weight_value = input('> ')
+    print('Enter the gold value of the item:')
+    gold_value = input('> ')
+
+    print(fuzzy_logic(gold_value, weight_value))
+
+
 def process_input(user_input):
     responseAgent = "aiml"
 
@@ -286,6 +296,8 @@ def process_input(user_input):
             if cmd == "#7":  # if the input pattern is "check that * is *"
                 object, subject = params[1].split(' is ')
                 answer_user_question(subject, object)
+            if cmd == '#8': # Fuzzy logic
+                guess_the_item()
         else:
             print(answer)
 

@@ -145,6 +145,13 @@
         <template>#7$<star index="1"/> is <star index="2"/></template>
     </category>
 
+    <!-- Fuzzy logic -->
+
+    <category>
+        <pattern> GUESS THE ITEM CATEGORY </pattern>
+        <template>#8$</template>
+    </category>
+
     <!-- default reaction -->
 
    <category>
