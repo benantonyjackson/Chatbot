@@ -16,6 +16,7 @@ import easygui
 
 from nltk.sem import Expression
 from nltk.inference import ResolutionProver
+from nltk.corpus import stopwords
 
 from simpful import FuzzySystem
 from simpful import FuzzySet
@@ -269,6 +270,17 @@ def guess_the_item():
     print(fuzzy_logic(gold_value, weight_value))
 
 
+def remove_connectives(words):
+    stopWords = set(stopwords.words('english'))
+    words = words.split(" ")
+    filter_words = ""
+    for word in words:
+        if word not in stopWords:
+            filter_words += word
+
+    return filter_words
+
+
 def process_input(user_input):
     responseAgent = "aiml"
 
@@ -303,10 +315,10 @@ def process_input(user_input):
                 generate_image()
             if cmd == "#6":  # if input pattern is "I know that * is *"
                 object, subject = params[1].split(' is ')
-                expand_knowledge_base(subject, object)
+                expand_knowledge_base(remove_connectives(subject), remove_connectives(object))
             if cmd == "#7":  # if the input pattern is "check that * is *"
                 object, subject = params[1].split(' is ')
-                answer_user_question(subject, object)
+                answer_user_question(remove_connectives(subject), remove_connectives(object))
             if cmd == '#8':  # Fuzzy logic
                 guess_the_item()
         else:
