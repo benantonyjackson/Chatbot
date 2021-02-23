@@ -33,12 +33,14 @@ CATEGORIES_WITHOUT_WILDCARDS = []
 
 qapairs = QApairs()
 
+FS = None
 
-def fuzzy_logic(gold_value, weight_value):
-    # A simple fuzzy inference system for the tipping problem
+
+def init_fuzzy_system():
     # Create a fuzzy system object
     FS = FuzzySystem()
 
+    # Defines fuzzy rule set
     S_1 = FuzzySet(function=Triangular_MF(a=0, b=0, c=0.2), term="weightless")
     S_2 = FuzzySet(function=Triangular_MF(a=0.2, b=0.7, c=1), term="light")
     S_3 = FuzzySet(function=Triangular_MF(a=1, b=15, c=15), term="heavy")
@@ -51,29 +53,31 @@ def fuzzy_logic(gold_value, weight_value):
                                LinguisticVariable([F_1, F_2], concept="Gold Value", universe_of_discourse=[0, 10000]))
 
     # Define output fuzzy sets and linguistic variable
-    T_1 = FuzzySet(function=Triangular_MF(a=0, b=5, c=10), term="Weapon")
+    T_1 = FuzzySet(function=Triangular_MF(a=0, b=5, c=10), term="Sword")
     T_2 = FuzzySet(function=Triangular_MF(a=10, b=15, c=20), term="Junk")
     T_3 = FuzzySet(function=Triangular_MF(a=20, b=25, c=30), term="Food")
     T_4 = FuzzySet(function=Triangular_MF(a=30, b=35, c=40), term="Bomb or Potion")
     FS.add_linguistic_variable("Category", LinguisticVariable([T_1, T_2, T_3, T_4], universe_of_discourse=[0, 40]))
 
-    FS.produce_figure(outputfile='lvs.pdf')
-
     # Define fuzzy rules
-    R1 = "IF (Weight IS heavy) AND (Value IS expensive) THEN (Category IS Weapon)"
+    R1 = "IF (Weight IS heavy) THEN (Category IS Weapon)"
     R2 = "IF (Weight IS light) THEN (Category IS Junk)"
     R3 = "IF (Weight IS weightless) AND (Value IS cheap) THEN (Category IS Food)"
     R4 = "IF (Weight IS weightless) AND (Value IS expensive) THEN (Category IS Bomb or Potion)"
     FS.add_rules([R1, R2, R3, R4])
 
-    # Set antecedents values
+    return FS
+
+
+def fuzzy_logic(gold_value, weight_value):
     FS.set_variable("Weight", weight_value)
     FS.set_variable("Value", gold_value)
 
     strengths = FS.get_firing_strengths()
 
-    outputs = ['Weapon', 'Junk', 'Food', 'Potion or Bomb']
+    outputs = ['Sword', 'Junk', 'Food', 'Potion or Bomb']
 
+    # Returns the name of the category which best fits the input
     return outputs[strengths.index(max(strengths))]
 
 
@@ -322,6 +326,8 @@ if __name__ == "__main__":
     parser = WitcherWikiParser()
 
     load_knowledge_base()
+
+    FS = init_fuzzy_system()
 
     while True:
         process_input(input('> '))
