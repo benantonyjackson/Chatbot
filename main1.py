@@ -29,6 +29,62 @@ CATEGORIES_WITHOUT_WILDCARDS = []
 qapairs = QApairs()
 
 
+def fuzzy_logic():
+    # A simple fuzzy inference system for the tipping problem
+    # Create a fuzzy system object
+    FS = FuzzySystem()
+
+    # Define fuzzy sets and linguistic variables
+    # S_1 = FuzzySet(function=Triangular_MF(a=0, b=0.2, c=0.2), term="weightless")
+    # S_2 = FuzzySet(function=Triangular_MF(a=0.2, b=1, c=1), term="light")
+    # S_3 = FuzzySet(function=Triangular_MF(a=1, b=1, c=15), term="heavy")
+    # FS.add_linguistic_variable("Weight", LinguisticVariable([S_1, S_2, S_3], concept="Weight", universe_of_discourse=[0,15]))
+    S_1 = FuzzySet(function=Triangular_MF(a=0, b=0, c=0.2), term="weightless")
+    S_2 = FuzzySet(function=Triangular_MF(a=0.2, b=0.7, c=1), term="light")
+    S_3 = FuzzySet(function=Triangular_MF(a=1, b=15, c=15), term="heavy")
+    FS.add_linguistic_variable("Weight",
+                               LinguisticVariable([S_1, S_2, S_3], concept="Weight", universe_of_discourse=[0, 15]))
+
+    # F_1 = FuzzySet(function=Triangular_MF(a=0, b=0, c=100), term="cheap")
+    # F_2 = FuzzySet(function=Triangular_MF(a=100, b=100, c=10000), term="expensive")
+    # FS.add_linguistic_variable("Value", LinguisticVariable([F_1, F_2], concept="Gold Value", universe_of_discourse=[0,10000]))
+
+    F_1 = FuzzySet(function=Triangular_MF(a=0, b=50, c=100), term="cheap")
+    F_2 = FuzzySet(function=Triangular_MF(a=100, b=10000, c=10000), term="expensive")
+    FS.add_linguistic_variable("Value",
+                               LinguisticVariable([F_1, F_2], concept="Gold Value", universe_of_discourse=[0, 10000]))
+
+    # Define output fuzzy sets and linguistic variable
+    T_1 = FuzzySet(function=Triangular_MF(a=0, b=5, c=10), term="Weapon")
+    T_2 = FuzzySet(function=Triangular_MF(a=10, b=15, c=20), term="Junk")
+    T_3 = FuzzySet(function=Triangular_MF(a=20, b=25, c=30), term="Food")
+    T_4 = FuzzySet(function=Triangular_MF(a=30, b=35, c=40), term="Bomb or Potion")
+    FS.add_linguistic_variable("Category", LinguisticVariable([T_1, T_2, T_3, T_4], universe_of_discourse=[0, 40]))
+
+    FS.produce_figure(outputfile='lvs.pdf')
+
+    # Define fuzzy rules
+    R1 = "IF (Weight IS heavy) AND (Value IS expensive) THEN (Category IS Weapon)"
+    R2 = "IF (Weight IS light) THEN (Category IS Junk)"
+    R3 = "IF (Weight IS weightless) AND (Value IS cheap) THEN (Category IS Food)"
+    R4 = "IF (Weight IS weightless) AND (Value IS expensive) THEN (Category IS Bomb or Potion)"
+    FS.add_rules([R1, R2, R3, R4])
+
+    # Set antecedents values
+    FS.set_variable("Weight", 2.8)
+    FS.set_variable("Value", 500)
+
+    # Perform Mamdani inference and print output
+    print(FS.Mamdani_inference(["Category"]))
+
+    print(FS.get_firing_strengths())
+
+    strengths = FS.get_firing_strengths()
+
+    outputs = ['Weapon', 'Junk', 'Food', 'Potion or Bomb']
+    print(outputs[strengths.index(max(strengths))])
+
+
 def check_integrity(dummy_subject, dummy_object):
     return evaluate_expression(dummy_object + '(' + dummy_subject + ')') == "I don't know"
 
