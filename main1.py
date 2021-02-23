@@ -17,6 +17,11 @@ import easygui
 from nltk.sem import Expression
 from nltk.inference import ResolutionProver
 
+from simpful import FuzzySystem
+from simpful import FuzzySet
+from simpful import Triangular_MF
+from simpful import LinguisticVariable
+
 import pandas
 
 read_expr = Expression.fromstring
@@ -29,25 +34,16 @@ CATEGORIES_WITHOUT_WILDCARDS = []
 qapairs = QApairs()
 
 
-def fuzzy_logic():
+def fuzzy_logic(gold_value, weight_value):
     # A simple fuzzy inference system for the tipping problem
     # Create a fuzzy system object
     FS = FuzzySystem()
 
-    # Define fuzzy sets and linguistic variables
-    # S_1 = FuzzySet(function=Triangular_MF(a=0, b=0.2, c=0.2), term="weightless")
-    # S_2 = FuzzySet(function=Triangular_MF(a=0.2, b=1, c=1), term="light")
-    # S_3 = FuzzySet(function=Triangular_MF(a=1, b=1, c=15), term="heavy")
-    # FS.add_linguistic_variable("Weight", LinguisticVariable([S_1, S_2, S_3], concept="Weight", universe_of_discourse=[0,15]))
     S_1 = FuzzySet(function=Triangular_MF(a=0, b=0, c=0.2), term="weightless")
     S_2 = FuzzySet(function=Triangular_MF(a=0.2, b=0.7, c=1), term="light")
     S_3 = FuzzySet(function=Triangular_MF(a=1, b=15, c=15), term="heavy")
     FS.add_linguistic_variable("Weight",
                                LinguisticVariable([S_1, S_2, S_3], concept="Weight", universe_of_discourse=[0, 15]))
-
-    # F_1 = FuzzySet(function=Triangular_MF(a=0, b=0, c=100), term="cheap")
-    # F_2 = FuzzySet(function=Triangular_MF(a=100, b=100, c=10000), term="expensive")
-    # FS.add_linguistic_variable("Value", LinguisticVariable([F_1, F_2], concept="Gold Value", universe_of_discourse=[0,10000]))
 
     F_1 = FuzzySet(function=Triangular_MF(a=0, b=50, c=100), term="cheap")
     F_2 = FuzzySet(function=Triangular_MF(a=100, b=10000, c=10000), term="expensive")
@@ -71,13 +67,8 @@ def fuzzy_logic():
     FS.add_rules([R1, R2, R3, R4])
 
     # Set antecedents values
-    FS.set_variable("Weight", 2.8)
-    FS.set_variable("Value", 500)
-
-    # Perform Mamdani inference and print output
-    print(FS.Mamdani_inference(["Category"]))
-
-    print(FS.get_firing_strengths())
+    FS.set_variable("Weight", weight_value)
+    FS.set_variable("Value", gold_value)
 
     strengths = FS.get_firing_strengths()
 
