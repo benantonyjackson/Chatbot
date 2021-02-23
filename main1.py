@@ -41,7 +41,7 @@ def init_fuzzy_system():
     # Create a fuzzy system object
     FS = FuzzySystem()
 
-    # Defines fuzzy rule set
+    # Define fuzzy sets and linguistic variables
     S_1 = FuzzySet(function=Triangular_MF(a=0, b=0, c=0.2), term="weightless")
     S_2 = FuzzySet(function=Triangular_MF(a=0.2, b=0.7, c=1), term="light")
     S_3 = FuzzySet(function=Triangular_MF(a=1, b=15, c=15), term="heavy")
@@ -270,6 +270,7 @@ def guess_the_item():
     print("I would guess that this item is " + fuzzy_logic(gold_value, weight_value))
 
 
+# https://www.quora.com/How-do-I-remove-determiners-and-conjunctions-from-string-in-Python
 def remove_connectives(words):
     stopWords = set(stopwords.words('english'))
     words = words.split(" ")
