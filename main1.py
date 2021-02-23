@@ -76,7 +76,7 @@ def fuzzy_logic(gold_value, weight_value):
 
     strengths = FS.get_firing_strengths()
 
-    outputs = ['Sword', 'Junk', 'Food', 'Potion or Bomb']
+    outputs = ['a Sword', 'Junk', 'Food or Drink', 'a Potion or Bomb']
 
     # Returns the name of the category which best fits the input
     return outputs[strengths.index(max(strengths))]
@@ -267,7 +267,7 @@ def guess_the_item():
             continue
         break
 
-    print(fuzzy_logic(gold_value, weight_value))
+    print("I would guess that this item is " + fuzzy_logic(gold_value, weight_value))
 
 
 def remove_connectives(words):
