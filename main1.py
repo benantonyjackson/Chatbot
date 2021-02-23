@@ -191,6 +191,7 @@ def expand_knowledge_base(subject, object):
         print('OK, I will remember that', object, 'is', subject)
     else:
         print("This is contradictory")
+        # Removes contradictory sentence
         kb.pop()
 
     # if evaluate_expression(expression_string) == "Incorrect":
