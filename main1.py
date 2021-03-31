@@ -216,7 +216,7 @@ def spell_check_sentence(inp):
     return ret[:-1]
 
 
-def get_enemy_description(inp, parser):
+def get_enemy_description(inp, parser, language):
     try:
         words = inp.split(' ')
 
@@ -224,12 +224,20 @@ def get_enemy_description(inp, parser):
             for word in words:
                 if word in parser.ALL_ENEMIES:
                     inp = word
-        print(parser.get_summary(inp))
+
+        output = parser.get_summary(inp)
+        if language != "en":
+            output, _ = translate_text(output, language)
+        print(output)
     except (Exception):
-        print("Sorry I'm not sure what a '" + inp + "' is. Try asking something else")
+        output = "Sorry I'm not sure what a '" + inp + "' is. Try asking something else"
+
+        if language != 'en':
+            output, _ = translate_text(output, language)
+        print(output)
 
 
-def get_enemy_weaknesses(inp, parser):
+def get_enemy_weaknesses(inp, parser, ):
     try:
         words = inp.split(' ')
 
