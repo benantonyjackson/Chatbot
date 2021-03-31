@@ -311,17 +311,21 @@ def answer_user_question(subject, object, language):
     print(output)
 
 
-def expand_knowledge_base(subject, object):
+def expand_knowledge_base(subject, object, language):
     expression_string = subject + ' (' + object + ')'
 
     kb.append(read_expr(expression_string))
 
     if check_integrity('xxx', 'yyy'):
-        print('OK, I will remember that', object, 'is', subject)
+        output = 'OK, I will remember that ' + object + ' is ' + subject
     else:
-        print("This is contradictory")
+        output = "This is contradictory"
         # Removes contradictory sentence
         kb.pop()
+
+    if language != 'en':
+        output, _ = translate_text(output, language)
+    print(output)
 
 
 def guess_the_item():

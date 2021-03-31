@@ -148,6 +148,16 @@
         <template>#6$<star index="1"/> is <star index="2"/></template>
     </category>
 
+    <category>
+        <pattern> I KNOW THE * IS *</pattern>
+        <template>#6$<star index="1"/> is <star index="2"/></template>
+    </category>
+
+    <category>
+        <pattern> I KNOW * IS *</pattern>
+        <template>#6$<star index="1"/> is <star index="2"/></template>
+    </category>
+
     <!-- Checking against knowledge base -->
 
     <category>
