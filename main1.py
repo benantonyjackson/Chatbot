@@ -168,7 +168,7 @@ def find_most_similar_question(question, language):
             print(output)
         else:
             # If the most similar result is a pattern without a wild card, input the pattern into the chat bot
-            process_input(CATEGORIES_WITHOUT_WILDCARDS[response['index'] - len(qapairs.questions)])
+            process_input(CATEGORIES_WITHOUT_WILDCARDS[response['index'] - len(qapairs.questions)], language)
 
 
 # Uses cosine similarity to find the most similar document to the input
@@ -328,7 +328,7 @@ def remove_connectives(words):
     return filter_words
 
 
-def process_input(user_input):
+def process_input(user_input, language=''):
     responseAgent = "aiml"
 
     # Strips punctuation from input
@@ -337,7 +337,8 @@ def process_input(user_input):
     user_input = user_input.lower()
 
     # user_input = spell_check_sentence(user_input)
-    user_input, language = translate_text(user_input, to_lang='en')
+    if language == '':
+        user_input, language = translate_text(user_input, to_lang='en')
 
     # print("Body: " + str(bod))
 
