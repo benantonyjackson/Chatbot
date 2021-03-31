@@ -160,19 +160,13 @@ def find_most_similar_question(question, language):
 
     # If the similarity is 0 then an appropriate match was not found
     if response['similarity'] == 0:
-        if language != 'en':
-            print(translate_text("I'm sorry, I'm not sure what you mean. Can you rephrase it?", language)[0])
-        else:
-            print("I'm sorry, I'm not sure what you mean. Can you rephrase it?")
+        print_translated_text("I'm sorry, I'm not sure what you mean. Can you rephrase it?", language)
     else:
         # Checks if the most similar response is a qa pair or a pattern without a wild card
         if response['index'] < len(qapairs.questions):
             # Prints most similar answer, adding a new line after each full stop to make it more readable
             output = qapairs.answers[response['index']].replace(". ", ".\n")
-            if language != "en":
-                output, _ = translate_text(output, language)
-
-            print(output)
+            print_translated_text(output, language)
         else:
             # If the most similar result is a pattern without a wild card, input the pattern into the chat bot
             process_input(CATEGORIES_WITHOUT_WILDCARDS[response['index'] - len(qapairs.questions)], language)
