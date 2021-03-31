@@ -227,15 +227,10 @@ def get_enemy_description(inp, parser, language):
                     inp = word
 
         output = parser.get_summary(inp)
-        if language != "en":
-            output, _ = translate_text(output, language)
-        print(output)
+        print_translated_text(output, language)
     except (Exception):
         output = "Sorry I'm not sure what a '" + inp + "' is. Try asking something else"
-
-        if language != 'en':
-            output, _ = translate_text(output, language)
-        print(output)
+        print_translated_text(output, language)
 
 
 def get_enemy_weaknesses(inp, parser, language):
