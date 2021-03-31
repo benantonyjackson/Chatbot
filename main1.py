@@ -303,9 +303,12 @@ def evaluate_expression(expression_string, verbose=False):
             return "I don't know"
 
 
-def answer_user_question(subject, object):
+def answer_user_question(subject, object, language):
     expression_string = subject + '(' + object + ')'
-    print(evaluate_expression(expression_string))
+    output = evaluate_expression(expression_string)
+    if language != 'en':
+        output, _ = translate_text(output, language)
+    print(output)
 
 
 def expand_knowledge_base(subject, object):

@@ -155,6 +155,21 @@
         <template>#7$<star index="1"/> is <star index="2"/></template>
     </category>
 
+    <category>
+        <pattern> CHECKS THAT * IS *</pattern>
+        <template>#7$<star index="1"/> is <star index="2"/></template>
+    </category>
+
+    <category>
+        <pattern> VERIFY THAT * IS *</pattern>
+        <template>#7$<star index="1"/> is <star index="2"/></template>
+    </category>
+
+    <category>
+        <pattern> MAKE SURE THAT * IS *</pattern>
+        <template>#7$<star index="1"/> is <star index="2"/></template>
+    </category>
+
     <!-- Fuzzy logic -->
 
     <category>
