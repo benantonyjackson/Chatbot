@@ -310,9 +310,7 @@ def expand_knowledge_base(subject, object, language):
         # Removes contradictory sentence
         kb.pop()
 
-    if language != 'en':
-        output, _ = translate_text(output, language)
-    print(output)
+    print_translated_text(output, language)
 
 
 def guess_the_item(language):
