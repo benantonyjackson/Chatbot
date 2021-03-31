@@ -121,6 +121,12 @@
         <template>#2$<star index="1"></star></template>
     </category>
 
+    <category>
+        <pattern>HOW WOULD KILL ME A *</pattern>
+        <template>#2$<star index="1"></star></template>
+    </category>
+
+
     <!-- classify image -->
 
     <category>

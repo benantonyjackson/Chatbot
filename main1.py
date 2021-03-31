@@ -237,7 +237,7 @@ def get_enemy_description(inp, parser, language):
         print(output)
 
 
-def get_enemy_weaknesses(inp, parser, ):
+def get_enemy_weaknesses(inp, parser, language):
     try:
         words = inp.split(' ')
 
@@ -247,11 +247,23 @@ def get_enemy_weaknesses(inp, parser, ):
                     inp = word
 
         weaknesses = parser.get_enemy_weaknesses(inp)
-        print("A " + inp + " is weak to:")
+
+        output = "A " + inp + " is weak to:"
+
+        # print("A " + inp + " is weak to:")
         for weakness in weaknesses:
-            print(weakness)
+            # print(weakness)
+            output += "\n" + weakness
+
+        if language != 'en':
+            output, _ = translate_text(output, language)
+        print(output)
     except (Exception):
-        print("Sorry I'm not sure what a '" + inp + "' is. Try asking something else")
+        output = "Sorry I'm not sure what a '" + inp + "' is. Try asking something else"
+
+        if language != 'en':
+            output, _ = translate_text(output, language)
+        print(output)
 
 
 def classify_image(filepath=""):
