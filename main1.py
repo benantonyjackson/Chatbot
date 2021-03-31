@@ -251,9 +251,7 @@ def get_enemy_weaknesses(inp, parser, language):
             # print(weakness)
             output += "\n" + weakness
 
-        if language != 'en':
-            output, _ = translate_text(output, language)
-        print(output)
+        print_translated_text(output, language)
     except (Exception):
         output = "Sorry I'm not sure what a '" + inp + "' is. Try asking something else"
 
