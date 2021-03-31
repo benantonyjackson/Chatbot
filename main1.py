@@ -12,6 +12,8 @@ import requests
 
 import uuid
 
+import json
+
 from qapairs import QApairs
 from Trained_CNN_Wrapper import TrainedModel
 from Trained_GAN_Wrapper import TrainedGan
@@ -27,6 +29,8 @@ from simpful import FuzzySet
 from simpful import Triangular_MF
 from simpful import LinguisticVariable
 
+# from azure.cognitiveservices.speech import SpeechConfig, SpeechSynthesizer, AudioConfig
+
 import pandas
 
 read_expr = Expression.fromstring
@@ -41,12 +45,12 @@ qapairs = QApairs()
 FS = None
 
 COG_KEY = '4ba57df8aa534bbca29b0b3f24a888f2'
-COG_ENDPOINT = 'https://n0736563-cw.cognitiveservices.azure.com/'
+# COG_ENDPOINT = 'https://n0736563-cw.cognitiveservices.azure.com/'
 COG_REGION = 'uksouth'
 
 
 # Taken from https://github.com/MicrosoftDocs/ai-fundamentals
-def translate_text(text, to_lang, cog_key=COG_KEY, cog_endpoint=COG_ENDPOINT, cog_region=COG_REGION):
+def translate_text(text_to_translate, to_lang, cog_key=COG_KEY, cog_region=COG_REGION):
     # Create the URL for the Text Translator service REST request
     path = 'https://api.cognitive.microsofttranslator.com/translate?api-version=3.0'
     # params = '&from={}&to={}'.format(from_lang, to_lang)
@@ -63,23 +67,33 @@ def translate_text(text, to_lang, cog_key=COG_KEY, cog_endpoint=COG_ENDPOINT, co
 
     # Add the text to be translated to the body
     body = [{
-        'text': text
+        'text': text_to_translate
     }]
+
+    print(body)
 
     # Get the translation
     request = requests.post(constructed_url, headers=headers, json=body)
     response = request.json()
 
-    # return response
     print(response)
+
     return response[0]["translations"][0]["text"], response[0]['detectedLanguage']['language']
 
 
-def print_translated_text(text, language):
-    if language != 'en':
-        text, _ = translate_text(text, language)
+# Taken from https://github.com/MicrosoftDocs/ai-fundamentals
+# def synthesize_text(text, cog_key=COG_KEY, cog_region=COG_REGION):
+#     speech_config = SpeechConfig(cog_key, cog_region)
+#     speech_synthesizer = SpeechSynthesizer(speech_config)
+#     speech_synthesizer.speak_text(text)
 
-    print(text)
+
+def print_translated_text(text_to_print, language):
+    if language != 'en':
+        text_to_print, _ = translate_text(text_to_print, language)
+
+    print(text_to_print)
+    # synthesize_text(text)
 
 
 def init_fuzzy_system():
@@ -383,10 +397,7 @@ def process_input(user_input, language=''):
             if cmd == "#4":
                 classify_image(language=language)
             if cmd == "#5":
-                output = "Sure! I'll generate you an image of a bear now!"
-                if language != 'en':
-                    output, _ = translate_text(output, language)
-                print(output)
+                print_translated_text("Sure! I'll generate you an image of a bear now!", language)
                 generate_image()
             if cmd == "#6":  # if input pattern is "I know that * is *"
                 object, subject = params[1].split(' is ')
@@ -397,9 +408,7 @@ def process_input(user_input, language=''):
             if cmd == '#8':  # Fuzzy logic
                 guess_the_item(language)
         else:
-            if language != 'en':
-                answer, _ = translate_text(answer, language)
-                print(answer)
+            print_translated_text(answer, language)
 
 
 if __name__ == "__main__":
