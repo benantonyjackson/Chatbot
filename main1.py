@@ -255,9 +255,7 @@ def get_enemy_weaknesses(inp, parser, language):
     except (Exception):
         output = "Sorry I'm not sure what a '" + inp + "' is. Try asking something else"
 
-        if language != 'en':
-            output, _ = translate_text(output, language)
-        print(output)
+        print_translated_text(output, language)
 
 
 def classify_image(filepath="", language="en"):
@@ -268,10 +266,7 @@ def classify_image(filepath="", language="en"):
 
     output = "This image appears to contain " + prediction + "\n" + parser.get_summary(prediction)
 
-    if language != 'en':
-        output, _ = translate_text(output, language)
-
-    print(output)
+    print_translated_text(output, language)
 
     # print("This image appears to contain " + prediction)
     # print(parser.get_summary(prediction))
