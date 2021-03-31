@@ -75,6 +75,13 @@ def translate_text(text, to_lang, cog_key=COG_KEY, cog_endpoint=COG_ENDPOINT, co
     return response[0]["translations"][0]["text"], response[0]['detectedLanguage']['language']
 
 
+def print_translated_text(text, language):
+    if language != 'en':
+        text, _ = translate_text(text, language)
+
+    print(text)
+
+
 def init_fuzzy_system():
     # Create a fuzzy system object
     FS = FuzzySystem()
@@ -328,26 +335,26 @@ def expand_knowledge_base(subject, object, language):
     print(output)
 
 
-def guess_the_item():
-    print('Enter the weight of the item:')
+def guess_the_item(language):
+    print_translated_text('Enter the weight of the item:', language)
     while True:
         try:
             weight_value = float(input('> '))
         except ValueError:
-            print('Please enter a number')
+            print_translated_text('Please enter a number', language)
             continue
         break
 
-    print('Enter the gold value of the item:')
+    print_translated_text('Enter the gold value of the item:', language)
     while True:
         try:
             gold_value = float(input('> '))
         except ValueError:
-            print('Please enter a number')
+            print_translated_text('Please enter a number', language)
             continue
         break
 
-    print("I would guess that this item is " + fuzzy_logic(gold_value, weight_value))
+    print_translated_text("I would guess that this item is " + fuzzy_logic(gold_value, weight_value), language)
 
 
 # https://www.quora.com/How-do-I-remove-determiners-and-conjunctions-from-string-in-Python
