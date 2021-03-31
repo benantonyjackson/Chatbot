@@ -391,8 +391,11 @@ def process_input(user_input, language=''):
             if cmd == "#4":
                 classify_image(language=language)
             if cmd == "#5":
-                print("Sure! I'll generate you an image of a bear now!")
-                generate_image(language=language)
+                output = "Sure! I'll generate you an image of a bear now!"
+                if language != 'en':
+                    output, _ = translate_text(output, language)
+                print(output)
+                generate_image()
             if cmd == "#6":  # if input pattern is "I know that * is *"
                 object, subject = params[1].split(' is ')
                 expand_knowledge_base(remove_connectives(subject), remove_connectives(object), language)
