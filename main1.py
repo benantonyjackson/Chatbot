@@ -295,9 +295,7 @@ def evaluate_expression(expression_string, verbose=False):
 def answer_user_question(subject, object, language):
     expression_string = subject + '(' + object + ')'
     output = evaluate_expression(expression_string)
-    if language != 'en':
-        output, _ = translate_text(output, language)
-    print(output)
+    print_translated_text(output, language)
 
 
 def expand_knowledge_base(subject, object, language):
