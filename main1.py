@@ -8,6 +8,10 @@ from bs4 import BeautifulSoup
 import string
 from autocorrect import Speller
 
+import requests
+
+import uuid
+
 from qapairs import QApairs
 from Trained_CNN_Wrapper import TrainedModel
 from Trained_GAN_Wrapper import TrainedGan
@@ -36,6 +40,40 @@ qapairs = QApairs()
 
 FS = None
 
+COG_KEY = '4ba57df8aa534bbca29b0b3f24a888f2'
+COG_ENDPOINT = 'https://n0736563-cw.cognitiveservices.azure.com/'
+COG_REGION = 'uksouth'
+
+
+# Taken from https://github.com/MicrosoftDocs/ai-fundamentals
+def translate_text(text, to_lang, cog_key=COG_KEY, cog_endpoint=COG_ENDPOINT, cog_region=COG_REGION):
+    # Create the URL for the Text Translator service REST request
+    path = 'https://api.cognitive.microsofttranslator.com/translate?api-version=3.0'
+    # params = '&from={}&to={}'.format(from_lang, to_lang)
+    params = '&to={}'.format(to_lang)
+    constructed_url = path + params
+
+    # Prepare the request headers with Cognitive Services resource key and region
+    headers = {
+        'Ocp-Apim-Subscription-Key': cog_key,
+        'Ocp-Apim-Subscription-Region': cog_region,
+        'Content-type': 'application/json',
+        'X-ClientTraceId': str(uuid.uuid4())
+    }
+
+    # Add the text to be translated to the body
+    body = [{
+        'text': text
+    }]
+
+    # Get the translation
+    request = requests.post(constructed_url, headers=headers, json=body)
+    response = request.json()
+
+    # return response
+    print(response)
+    return response[0]["translations"][0]["text"], response[0]['detectedLanguage']['language']
+
 
 def init_fuzzy_system():
     # Create a fuzzy system object
@@ -61,7 +99,7 @@ def init_fuzzy_system():
     FS.add_linguistic_variable("Category", LinguisticVariable([T_1, T_2, T_3, T_4], universe_of_discourse=[0, 40]))
 
     # Define fuzzy rules
-    R1 = "IF (Weight IS heavy) THEN (Category IS Weapon)"
+    R1 = "IF (Weight IS heavy) THEN (Category IS Sword)"
     R2 = "IF (Weight IS light) THEN (Category IS Junk)"
     R3 = "IF (Weight IS weightless) AND (Value IS cheap) THEN (Category IS Food)"
     R4 = "IF (Weight IS weightless) AND (Value IS expensive) THEN (Category IS Bomb or Potion)"
@@ -292,6 +330,9 @@ def process_input(user_input):
     user_input = user_input.lower()
 
     # user_input = spell_check_sentence(user_input)
+    user_input, language = translate_text(user_input, to_lang='en')
+
+    # print("Body: " + str(bod))
 
     if responseAgent == "aiml":
         answer = kernel.respond(user_input)
@@ -304,27 +345,29 @@ def process_input(user_input):
                 print(phrase)
                 quit()
             if cmd == "#1":
-                get_enemy_description(params[1], parser)
+                get_enemy_description(params[1], parser, language)
             if cmd == "#2":
-                get_enemy_weaknesses(params[1], parser)
+                get_enemy_weaknesses(params[1], parser, language)
             if cmd == "#3":
                 # QA pairs
-                find_most_similar_question(params[1])
+                find_most_similar_question(params[1], language)
             if cmd == "#4":
-                classify_image()
+                classify_image(language)
             if cmd == "#5":
                 print("Sure! I'll generate you an image of a bear now!")
-                generate_image()
+                generate_image(language)
             if cmd == "#6":  # if input pattern is "I know that * is *"
                 object, subject = params[1].split(' is ')
-                expand_knowledge_base(remove_connectives(subject), remove_connectives(object))
+                expand_knowledge_base(remove_connectives(subject), remove_connectives(object), language)
             if cmd == "#7":  # if the input pattern is "check that * is *"
                 object, subject = params[1].split(' is ')
-                answer_user_question(remove_connectives(subject), remove_connectives(object))
+                answer_user_question(remove_connectives(subject), remove_connectives(object), language)
             if cmd == '#8':  # Fuzzy logic
-                guess_the_item()
+                guess_the_item(language)
         else:
-            print(answer)
+            if language != 'en':
+                answer, _ = translate_text(answer, language)
+                print(answer)
 
 
 if __name__ == "__main__":

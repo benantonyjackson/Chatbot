@@ -33,6 +33,10 @@
         <pattern>HI</pattern>
         <template><srai>HELLO</srai></template>
     </category>
+    <category>
+        <pattern>GOOD MORNING</pattern>
+        <template><srai>HELLO</srai></template>
+    </category>
 
     <!-- Escape phrases -->
 
