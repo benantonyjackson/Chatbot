@@ -29,7 +29,7 @@ from simpful import FuzzySet
 from simpful import Triangular_MF
 from simpful import LinguisticVariable
 
-# from azure.cognitiveservices.speech import SpeechConfig, SpeechSynthesizer, AudioConfig
+from azure.cognitiveservices.speech import SpeechConfig, SpeechSynthesizer, AudioConfig
 
 import pandas
 
@@ -45,7 +45,6 @@ qapairs = QApairs()
 FS = None
 
 COG_KEY = '4ba57df8aa534bbca29b0b3f24a888f2'
-# COG_ENDPOINT = 'https://n0736563-cw.cognitiveservices.azure.com/'
 COG_REGION = 'uksouth'
 
 
@@ -70,22 +69,18 @@ def translate_text(text_to_translate, to_lang, cog_key=COG_KEY, cog_region=COG_R
         'text': text_to_translate
     }]
 
-    print(body)
-
     # Get the translation
     request = requests.post(constructed_url, headers=headers, json=body)
     response = request.json()
-
-    print(response)
 
     return response[0]["translations"][0]["text"], response[0]['detectedLanguage']['language']
 
 
 # Taken from https://github.com/MicrosoftDocs/ai-fundamentals
-# def synthesize_text(text, cog_key=COG_KEY, cog_region=COG_REGION):
-#     speech_config = SpeechConfig(cog_key, cog_region)
-#     speech_synthesizer = SpeechSynthesizer(speech_config)
-#     speech_synthesizer.speak_text(text)
+def synthesize_text(text, cog_key=COG_KEY, cog_region=COG_REGION):
+    speech_config = SpeechConfig(cog_key, cog_region)
+    speech_synthesizer = SpeechSynthesizer(speech_config)
+    speech_synthesizer.speak_text(text)
 
 
 def print_translated_text(text_to_print, language):
@@ -93,7 +88,7 @@ def print_translated_text(text_to_print, language):
         text_to_print, _ = translate_text(text_to_print, language)
 
     print(text_to_print)
-    # synthesize_text(text)
+    synthesize_text(text_to_print)
 
 
 def init_fuzzy_system():
