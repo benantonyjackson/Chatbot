@@ -266,14 +266,21 @@ def get_enemy_weaknesses(inp, parser, language):
         print(output)
 
 
-def classify_image(filepath=""):
+def classify_image(filepath="", language="en"):
     if filepath == "":
         filepath = easygui.fileopenbox()
 
     prediction = TrainedModel().predict_local_image(path=filepath)
 
-    print("This image appears to contain " + prediction)
-    print(parser.get_summary(prediction))
+    output = "This image appears to contain " + prediction + "\n" + parser.get_summary(prediction)
+
+    if language != 'en':
+        output, _ = translate_text(output, language)
+
+    print(output)
+
+    # print("This image appears to contain " + prediction)
+    # print(parser.get_summary(prediction))
 
 
 def generate_image():
@@ -382,10 +389,10 @@ def process_input(user_input, language=''):
                 # QA pairs
                 find_most_similar_question(params[1], language)
             if cmd == "#4":
-                classify_image(language)
+                classify_image(language=language)
             if cmd == "#5":
                 print("Sure! I'll generate you an image of a bear now!")
-                generate_image(language)
+                generate_image(language=language)
             if cmd == "#6":  # if input pattern is "I know that * is *"
                 object, subject = params[1].split(' is ')
                 expand_knowledge_base(remove_connectives(subject), remove_connectives(object), language)
